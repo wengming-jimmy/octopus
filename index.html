@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>🐙 章魚哥獎 預測登記</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif;color:#f3e7c3;
+  background:radial-gradient(ellipse at 50% 0%,#3a1a78 0%,#1b0b40 50%,#07021a 100%) fixed}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:18px 14px 60px}
+header{text-align:center;padding:10px 0 6px}
+.octo{font-size:64px;line-height:1;display:inline-block;animation:bob 3s ease-in-out infinite;filter:drop-shadow(0 0 14px #ff8a65)}
+@keyframes bob{50%{transform:translateY(-8px) rotate(-6deg)}}
+h1{margin:6px 0 2px;font-size:clamp(24px,6.5vw,38px);letter-spacing:3px;color:#ffe9a8;text-shadow:0 0 12px #d4af37,0 0 28px #9b59ff;font-family:"Noto Serif TC","PMingLiU",serif}
+.sub{opacity:.8;letter-spacing:2px;font-size:14px}
+.rule{margin:14px auto 0;padding:12px 14px;border:1px dashed rgba(212,175,55,.6);border-radius:12px;background:rgba(20,8,50,.5);font-size:15px;line-height:1.7}
+.rule b{color:#ffe9a8}
+.box{margin-top:16px;padding:18px 16px;border-radius:16px;background:linear-gradient(180deg,rgba(30,10,70,.82),rgba(10,3,30,.88));border:1px solid #d4af37;box-shadow:0 0 24px rgba(155,89,255,.35)}
+.box h2{margin:0 0 12px;font-size:20px;color:#ffe9a8;letter-spacing:2px}
+label.f{display:block;margin:12px 0 6px;font-size:15px;color:#e9d8a6}
+input,select{width:100%;font-size:17px;padding:12px;border-radius:10px;border:1px solid rgba(212,175,55,.6);background:rgba(255,255,255,.95);color:#222;font-family:inherit}
+.grp{margin-top:18px}
+.grp h3{margin:0 0 8px;font-size:18px;color:#ffe9a8;display:flex;align-items:center;gap:8px}
+.grp h3 .st{margin-left:auto;font-size:13px;font-weight:normal;opacity:.75}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.opt{position:relative;padding:12px 10px;border-radius:12px;border:1px solid rgba(212,175,55,.45);background:rgba(255,255,255,.06);cursor:pointer;text-align:center;transition:.15s;user-select:none}
+.opt .n{font-size:17px;font-weight:bold;color:#fff}
+.opt .c{font-size:13px;opacity:.75;margin-top:2px}
+.opt.on{background:linear-gradient(135deg,#d4af37,#f7e08a);border-color:#fff3c4;box-shadow:0 0 16px #d4af37;transform:scale(1.02)}
+.opt.on .n,.opt.on .c{color:#2a0f55;opacity:1}
+.opt.on::after{content:'👑';position:absolute;top:-10px;right:-6px;font-size:20px}
+.go{display:block;width:100%;margin-top:22px;padding:16px;font-size:20px;font-weight:bold;letter-spacing:4px;border:0;border-radius:40px;cursor:pointer;color:#2a0f55;
+  background:linear-gradient(135deg,#d4af37,#f7e08a);box-shadow:0 0 22px #d4af37;font-family:inherit}
+.go:disabled{opacity:.5}
+.sec{display:inline-block;margin-top:10px;padding:10px 18px;border-radius:30px;border:1px solid #d4af37;background:rgba(20,8,50,.6);color:#ffe9a8;cursor:pointer;font-size:15px;font-family:inherit}
+.msg{margin-top:12px;padding:10px 12px;border-radius:10px;background:rgba(255,80,80,.18);border:1px solid rgba(255,120,120,.6);display:none}
+.ok{text-align:center}
+.ok .big{font-size:56px}
+.sum{text-align:left;margin:12px auto 0;max-width:420px;line-height:1.9;font-size:16px}
+.sum b{color:#ffe9a8}
+.closed{text-align:center;font-size:18px;line-height:1.8}
+.res table{width:100%;border-collapse:collapse;font-size:15px}
+.res td,.res th{padding:7px 6px;border-bottom:1px solid rgba(212,175,55,.25);text-align:left}
+.res th{color:#ffe9a8}
+.win{color:#7CFFB2;font-weight:bold}
+.ticket{position:relative;margin-top:16px;padding:20px 18px 16px;border-radius:18px;color:#2a0f55;text-align:center;overflow:hidden;
+  background:linear-gradient(160deg,#fff8e1 0%,#f7e08a 55%,#e6c35c 100%);border:3px double #8a5a00;box-shadow:0 0 30px rgba(212,175,55,.7)}
+.ticket::before,.ticket::after{content:'';position:absolute;top:50%;width:26px;height:26px;border-radius:50%;background:#1b0b40;transform:translateY(-50%)}
+.ticket::before{left:-13px}.ticket::after{right:-13px}
+.ticket .tt{font-size:22px;font-weight:bold;letter-spacing:3px}
+.ticket .ev{font-size:14px;opacity:.8;margin-top:2px}
+.ticket .no{font-size:40px;font-weight:900;letter-spacing:4px;margin:8px 0 0;font-family:Consolas,"Courier New",monospace;color:#7a1020}
+.ticket .cd{font-size:14px;letter-spacing:2px}
+.ticket .cd b{font-family:Consolas,monospace;font-size:18px;color:#7a1020}
+.ticket hr{border:0;border-top:2px dashed rgba(138,90,0,.5);margin:12px 0}
+.ticket .who{font-size:18px;font-weight:bold}
+.ticket .who small{display:block;font-size:14px;font-weight:normal;opacity:.8}
+.ticket .pk{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;text-align:left;max-width:360px;margin:8px auto 0;font-size:16px}
+.ticket .pk span:nth-child(odd){opacity:.75;white-space:nowrap}
+.ticket .pk span:nth-child(even){font-weight:bold}
+.ticket .tm{font-size:12px;opacity:.7;margin-top:10px}
+.ticket .warn{margin-top:10px;font-size:14px;font-weight:bold;color:#7a1020}
+.ticket .wm{position:absolute;right:-10px;bottom:-18px;font-size:110px;opacity:.12;transform:rotate(-15deg);pointer-events:none}
+.ticket.won{box-shadow:0 0 36px #7CFFB2}
+.foot{text-align:center;opacity:.5;font-size:12px;margin-top:24px}
+.loading{text-align:center;padding:40px 0;opacity:.8}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div class="wrap">
+  <header>
+    <div class="octo">🐙</div>
+    <h1 id="title">章魚哥獎</h1>
+    <div class="sub">✦ 預測四組冠軍・猜中就有獎 ✦</div>
+  </header>
+  <div class="rule" id="rule"></div>
+  <div id="main"><div class="loading">✧ 讀取中… ✧</div></div>
+  <div class="box" id="lookup" style="display:none">
+    <h2>🔍 查詢我的登記</h2>
+    <input id="qPhone" inputmode="numeric" maxlength="12" placeholder="輸入登記的手機號碼">
+    <button class="sec" onclick="lookup()">查詢</button>
+    <div id="qOut" style="margin-top:12px"></div>
+  </div>
+  <div class="foot">國際獅子會 300A-2 區</div>
+</div>
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+const FX=starfield(document.getElementById('fx'),{n:110});
+let D=null,sel={};
+async function init(){
+  try{const r=await apiGet();if(!r.ok)throw 0;D=r.data;render()}
+  catch(e){document.getElementById('main').innerHTML='<div class="box closed">連線失敗，請稍後重新整理。</div>'}
+}
+function render(){
+  document.getElementById('title').textContent=D.eventName;document.title='🐙 '+D.eventName;
+  document.getElementById('rule').innerHTML=`在 <b>對唱、新人、獨唱、長青</b> 四組中，各選一位你認為會拿下冠軍的選手。<br>四組中猜中 <b>${D.minHits} 組以上</b>冠軍，就能獲得 <b>🐙 章魚哥獎</b>！每支手機限登記一次。`;
+  document.getElementById('lookup').style.display='';
+  const m=document.getElementById('main');
+  if(D.published){m.innerHTML=resultHTML();return}
+  if(!D.open){m.innerHTML='<div class="box closed">🔒 預測登記已截止<br><span style="opacity:.75;font-size:15px">開獎後可在下方輸入手機查詢結果</span></div>';return}
+  const byG=g=>D.players.filter(p=>p.g===g);
+  const clubs=[...new Set(D.players.map(p=>p.club).filter(Boolean))];
+  m.innerHTML=`<div class="box"><h2>📝 獅友資料</h2>
+    <label class="f">專區</label><select id="zone"><option value="">請選擇專區</option>${D.zones.map(z=>`<option>${esc(z)}</option>`).join('')}</select>
+    <label class="f">分會</label><input id="club" list="clubs" placeholder="例如：台北市日月光獅子會" autocomplete="off"><datalist id="clubs">${clubs.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
+    <label class="f">姓名</label><input id="name" placeholder="請輸入姓名" autocomplete="name">
+    <label class="f">手機號碼</label><input id="phone" inputmode="numeric" maxlength="12" placeholder="09xxxxxxxx" autocomplete="tel">
+  </div>
+  <div class="box"><h2>👑 預測冠軍</h2>
+    ${GROUPS.map(g=>`<div class="grp"><h3>${GICON[g]} ${g}組 <span class="st" id="st_${g}">尚未選擇</span></h3>
+      <div class="opts">${byG(g).map((p,i)=>`<div class="opt" data-g="${g}" data-v="${esc(label(p))}" onclick="pick(this)"><div class="n">${esc(p.name)}</div><div class="c">${esc(p.club)}</div></div>`).join('')||'<div style="opacity:.6">選手名單尚未公布</div>'}</div></div>`).join('')}
+    <div class="msg" id="msg"></div>
+    <button class="go" id="goBtn" onclick="send()">✦ 送出預測 ✦</button>
+  </div>`;
+}
+function maskP(p){return String(p).replace(/^(\d{4})\d{3}(\d{3})$/,'$1***$2')}
+function ticket(t,extra){return `<div class="ticket ${t.win?'won':''}"><div class="wm">🐙</div>
+  <div class="tt">🐙 章魚哥獎 兌獎憑證</div><div class="ev">${esc(D.eventName)}</div>
+  <div class="no">${esc(t.no||'—')}</div><div class="cd">驗證碼 <b>${esc(t.code||'—')}</b></div><hr>
+  <div class="who">${esc(t.name)}<small>${esc(t.zone)}｜${esc(t.club)}｜${esc(t.phone)}</small></div>
+  <div class="pk">${GROUPS.map(g=>{const hit=t.hits&&t.hits.includes(g);return `<span>${GICON[g]} ${g}組</span><span>${esc(t.picks[g])}${t.hits?(hit?' ✔':' ✘'):''}</span>`}).join('')}</div>
+  ${extra||''}<div class="tm">登記時間 ${esc(t.time)}</div>
+  <div class="warn">📸 請截圖保存此畫面，得獎時出示兌獎</div></div>`}
+function pick(el){const g=el.dataset.g;document.querySelectorAll(`.opt[data-g="${g}"]`).forEach(x=>x.classList.remove('on'));el.classList.add('on');sel[g]=el.dataset.v;
+  document.getElementById('st_'+g).textContent='✔ 已選擇';FX.burstEl(el,40)}
+function err(t){const m=document.getElementById('msg');m.textContent=t;m.style.display='block';m.scrollIntoView({behavior:'smooth',block:'center'})}
+async function send(){
+  const v=id=>document.getElementById(id).value.trim();
+  const b={action:'submit',zone:v('zone'),club:v('club'),name:v('name'),phone:v('phone').replace(/\D/g,''),picks:sel};
+  if(!b.zone)return err('請選擇專區');if(!b.club)return err('請填寫分會');if(!b.name)return err('請填寫姓名');
+  if(!/^09\d{8}$/.test(b.phone))return err('手機號碼格式不正確（09 開頭共 10 碼）');
+  const miss=GROUPS.filter(g=>!sel[g]);if(miss.length)return err('還沒選：'+miss.map(g=>g+'組').join('、'));
+  if(!confirm(`確認送出？送出後不能修改。\n\n${GROUPS.map(g=>`${g}組：${sel[g]}`).join('\n')}`))return;
+  const btn=document.getElementById('goBtn');btn.disabled=true;btn.textContent='送出中…';
+  try{const r=await apiPost(b);
+    if(!r.ok){btn.disabled=false;btn.textContent='✦ 送出預測 ✦';return err(r.error||'送出失敗')}
+    document.getElementById('main').innerHTML=`<div class="box ok"><div class="big">🎉🐙</div><h2>登記成功！</h2>
+      ${ticket({no:r.no,code:r.code,time:r.time,zone:b.zone,club:b.club,name:b.name,phone:maskP(b.phone),picks:sel})}
+      <p style="opacity:.8">開獎後也可以在下方用手機號碼查詢、重新顯示這張憑證。祝你好運！</p></div>`;
+    window.scrollTo({top:0,behavior:'smooth'});setTimeout(()=>FX.burstEl(document.querySelector('.ticket'),300),300);
+  }catch(e){btn.disabled=false;btn.textContent='✦ 送出預測 ✦';err('網路連線失敗，請再按一次送出')}
+}
+function resultHTML(){
+  return `<div class="box res"><h2>👑 四組冠軍</h2><table>${GROUPS.map(g=>`<tr><th>${GICON[g]} ${g}組</th><td>${esc(D.champions[g]||'—')}</td></tr>`).join('')}</table></div>
+  <div class="box res"><h2>🐙 章魚哥獎得獎名單（${D.winners.length} 位）</h2>
+  <table><tr><th>編號</th><th>姓名</th><th>分會</th><th>猜中</th></tr>${D.winners.map(w=>`<tr><td>${esc(w.no)}</td><td>${esc(w.name)}</td><td>${esc(w.club)}<div style="font-size:12px;opacity:.6">${esc(w.zone)}</div></td><td>${w.hits} 組</td></tr>`).join('')||'<tr><td colspan=4>本次無人得獎</td></tr>'}</table></div>`;
+}
+async function lookup(){
+  const ph=document.getElementById('qPhone').value.replace(/\D/g,'');const o=document.getElementById('qOut');
+  if(!/^09\d{8}$/.test(ph)){o.textContent='請輸入正確的手機號碼';return}
+  o.textContent='查詢中…';
+  try{const r=await apiPost({action:'mine',phone:ph});
+    if(!r.ok){o.textContent=r.error;return}
+    const ex=r.published?(r.win?`<div class="warn" style="font-size:18px;color:#0b6b34">🎉 恭喜！猜中 ${r.hits.length} 組，獲得章魚哥獎！</div>`:`<div style="margin-top:8px">猜中 ${r.hits.length} 組，差一點點，下次加油！</div>`):'<div style="margin-top:8px;opacity:.75">尚未開獎</div>';
+    let h=ticket({...r,hits:r.published?r.hits:null},ex);
+    o.innerHTML=h;
+  }catch(e){o.textContent='網路連線失敗'}
+}
+init();
+</script>
+</body>
+</html>

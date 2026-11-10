@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🐙 章魚哥獎 開獎</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden}
+body{font-family:"Noto Serif TC","PMingLiU","Microsoft JhengHei",serif;color:#f3e7c3;background:#07021a}
+.bar{position:fixed;top:8px;right:10px;z-index:9;display:flex;gap:6px;opacity:.25;transition:.2s}
+.bar:hover{opacity:1}
+.bar button{background:rgba(20,8,50,.7);border:1px solid #d4af37;color:#ffe9a8;border-radius:16px;padding:5px 12px;cursor:pointer;font-family:inherit}
+.stage{position:relative;height:100vh;overflow:hidden;text-align:center;display:flex;flex-direction:column;padding:2vh 2vw;
+  background:radial-gradient(ellipse at 50% 40%,#3a1a78 0%,#1b0b40 45%,#07021a 100%)}
+#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.stage>*:not(#fx){position:relative;z-index:1}
+h1{margin:0;font-size:clamp(26px,5.4vh,56px);letter-spacing:6px;color:#ffe9a8;text-shadow:0 0 12px #d4af37,0 0 30px #9b59ff}
+.sub{opacity:.75;letter-spacing:4px;font-size:clamp(12px,1.8vh,18px);margin-bottom:.6vh}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:.6vh auto}
+.chip{border:1px solid #d4af37;background:rgba(20,8,50,.6);color:#e9d8a6;border-radius:20px;padding:.5vh 16px;font-size:clamp(13px,2vh,19px);cursor:pointer;font-family:inherit}
+.chip.on{background:linear-gradient(135deg,#d4af37,#f7e08a);color:#2a0f55;box-shadow:0 0 14px #d4af37;font-weight:bold}
+.chip.done:not(.on){opacity:.5}
+.chip.octo{border-color:#ff8a65}
+.remain{font-size:clamp(13px,1.9vh,18px);opacity:.85;margin:0}
+.main{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;gap:3vw}
+.altar{position:relative;flex:none;width:min(56vh,38vw);height:min(56vh,38vw);display:flex;align-items:center;justify-content:center}
+.ring{position:absolute;inset:0;animation:spin 40s linear infinite}
+.ring.r2{inset:9%;animation:spin 25s linear infinite reverse}
+.altar.casting .ring{animation-duration:3s}.altar.casting .ring.r2{animation-duration:2s}
+@keyframes spin{to{transform:rotate(360deg)}}
+.orb{position:relative;width:58%;height:58%;border-radius:50%;border:3px solid #f7e08a;cursor:pointer;color:#fff8dc;font-family:inherit;
+  background:radial-gradient(circle at 35% 30%,#d9b8ff 0%,#8a3ffc 30%,#3d0f8f 70%,#1a0540 100%);
+  box-shadow:0 0 25px #b57bff,0 0 60px #7b2cff,inset 0 0 40px rgba(255,255,255,.25);animation:pulse 2.4s ease-in-out infinite;transition:transform .15s}
+.orb:hover{transform:scale(1.05)}.orb:active{transform:scale(.96)}
+.orb.octo{background:radial-gradient(circle at 35% 30%,#ffd1c2 0%,#ff7a59 32%,#b8323a 72%,#4a0b1a 100%)}
+.altar.casting .orb{animation:pulse .5s ease-in-out infinite;background:radial-gradient(circle at 35% 30%,#fff3c4 0%,#ffb347 30%,#c2410c 75%,#4a1505 100%);box-shadow:0 0 30px #ffcf6b,0 0 90px #ff8c1a}
+@keyframes pulse{0%,100%{box-shadow:0 0 25px #b57bff,0 0 60px #7b2cff,inset 0 0 40px rgba(255,255,255,.25)}50%{box-shadow:0 0 45px #e0c3ff,0 0 110px #9b4dff,inset 0 0 50px rgba(255,255,255,.4)}}
+.orb .ic{display:block;font-size:clamp(28px,7vh,72px);line-height:1}
+.orb .aw{display:block;font-size:clamp(20px,4.4vh,44px);font-weight:bold;text-shadow:0 0 10px #000,0 0 18px #f7e08a;line-height:1.2}
+.orb .act{display:block;font-size:clamp(11px,1.8vh,17px);margin-top:1vh;letter-spacing:4px;color:#ffe9a8}
+.right{flex:1;max-width:1100px;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1.4vh;height:100%;justify-content:center}
+.roller{width:100%;min-height:34vh;max-height:72vh;overflow:auto;padding:2vh;border-radius:18px;display:flex;flex-direction:column;justify-content:center;scrollbar-width:none;
+  background:linear-gradient(180deg,rgba(30,10,70,.75),rgba(10,3,30,.85));border:2px solid #d4af37;box-shadow:0 0 30px rgba(155,89,255,.5),inset 0 0 30px rgba(212,175,55,.15)}
+.roller::-webkit-scrollbar{display:none}
+.roller.tall{justify-content:flex-start}
+.hint{font-size:clamp(16px,3vh,30px);opacity:.6;letter-spacing:6px}
+.champ .lbl{font-size:clamp(16px,3.4vh,34px);color:#e9d8a6;letter-spacing:6px}
+.champ .nm{font-size:clamp(34px,10vh,120px);font-weight:bold;line-height:1.15;color:#fff;text-shadow:0 0 18px #f7e08a,0 0 40px #b57bff}
+.champ .cl{font-size:clamp(16px,3.6vh,38px);color:#ffe9a8;margin-top:.6vh}
+.champ .ct{font-size:clamp(13px,2.4vh,24px);opacity:.8;margin-top:1.4vh}
+.champ .roll{font-size:clamp(30px,9vh,110px);font-weight:bold;color:#ffe9a8;text-shadow:0 0 16px #d4af37,0 0 40px #9b59ff}
+.win{animation:reveal .8s ease-out}
+@keyframes reveal{0%{transform:scale(.6);filter:blur(8px) brightness(3);opacity:0}60%{transform:scale(1.08);filter:blur(0) brightness(1.6);opacity:1}100%{transform:scale(1);filter:none}}
+.grid{display:grid;gap:1.1vh;width:100%}
+.card{position:relative;background:rgba(255,255,255,.06);border:1px solid rgba(212,175,55,.65);border-radius:12px;padding:1vh .5vw;box-shadow:0 0 12px rgba(155,89,255,.35)}
+.card .cnm{font-size:max(14px,calc(var(--f)*9vh));font-weight:bold;line-height:1.15;color:#fff;text-shadow:0 0 14px #f7e08a,0 0 30px #b57bff}
+.card .ccl{font-size:max(11px,calc(var(--f)*3.2vh));color:#ffe9a8}
+.card .czn{font-size:max(10px,calc(var(--f)*2.6vh));opacity:.7}
+.card .chit{display:inline-block;margin-top:.5vh;font-size:max(10px,calc(var(--f)*2.6vh));border-radius:12px;padding:.1vh .8vw;background:rgba(255,138,101,.25);border:1px solid #ff8a65;color:#ffd1c2}
+.card .chit.h3{background:rgba(212,175,55,.35);border-color:#f7e08a;color:#fff3c4}
+.card.rolling{border-color:#ffcf6b;box-shadow:0 0 18px #ff9a3c}
+.card .rl{font-size:max(14px,calc(var(--f)*8vh));font-weight:bold;color:#ffe9a8;padding:1vh 0}
+.card.pop{animation:reveal .7s ease-out both}
+.foot{font-size:clamp(13px,2.2vh,22px);color:#ffe9a8;min-height:1em}
+@media (max-aspect-ratio:1/1){.main{flex-direction:column;gap:1.4vh}.altar{width:min(32vh,70vw);height:min(32vh,70vw)}.right{height:auto;flex:1;min-height:0}.roller{max-height:50vh}}
+</style>
+</head>
+<body>
+<div class="bar"><button onclick="load(true)">⟳ 重新載入</button><button onclick="toggleFS()">⛶ 全螢幕</button></div>
+<div class="stage" id="stage">
+  <canvas id="fx"></canvas>
+  <h1 id="title">章魚哥獎</h1>
+  <div class="sub">✦ 冠軍揭曉・章魚哥神預測 ✦</div>
+  <div class="chips" id="chips"></div>
+  <div class="remain" id="info"></div>
+  <div class="main">
+    <div class="altar" id="altar">
+      <svg class="ring" viewBox="0 0 440 440"><defs><path id="cp1" d="M220,220 m-200,0 a200,200 0 1,1 400,0 a200,200 0 1,1 -400,0"/></defs>
+        <circle cx="220" cy="220" r="214" fill="none" stroke="#d4af37" stroke-width="2"/><circle cx="220" cy="220" r="186" fill="none" stroke="#d4af37" stroke-width="1" stroke-dasharray="4 6"/>
+        <text fill="#e9d8a6" font-size="17" letter-spacing="6"><textPath href="#cp1">ᚠ ᚢ ᚦ ᚨ ᚱ ᚲ ✦ 章 魚 哥 神 預 測 ✦ ᚷ ᚹ ᚺ ᚾ ᛁ ᛃ ✦ 歌 聲 響 起 ✦ ᛇ ᛈ ᛉ ᛊ ᛏ ᛒ ✦ 冠 軍 揭 曉 ✦</textPath></text></svg>
+      <svg class="ring r2" viewBox="0 0 360 360"><g fill="none" stroke="#b57bff" stroke-width="1.5"><circle cx="180" cy="180" r="176"/>
+        <polygon points="180,6 331,267 29,267"/><polygon points="180,354 29,93 331,93"/></g></svg>
+      <button class="orb" id="orb" onclick="toggle()"><span class="ic" id="oIc">🐙</span><span class="aw" id="oAw">—</span><span class="act" id="oAct">點擊施法</span></button>
+    </div>
+    <div class="right">
+      <div class="roller" id="roller"><div class="hint">✧ 等待命運揭曉 ✧</div></div>
+      <div class="foot" id="foot"></div>
+    </div>
+  </div>
+</div>
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+const FX=starfield(document.getElementById('fx'),{n:170});
+let D=null,step='對唱',rolling=null,shown={},scrollT=null;
+const STEPS=GROUPS.concat(['octo']);
+function pw(force){let p=localStorage.getItem('octo_pw');if(!p||force){p=prompt('請輸入管理密碼');if(p)localStorage.setItem('octo_pw',p)}return p}
+async function load(manual){
+  if(!pw())return;
+  try{const r=await apiPost({action:'getAll',password:localStorage.getItem('octo_pw')});
+    if(r.error==='auth'){localStorage.removeItem('octo_pw');alert('密碼錯誤');pw(true);return load()}
+    if(!r.ok)throw new Error(r.error);D=r.data;render();if(manual)alert('已重新載入：'+D.picks.length+' 筆登記、'+D.winners.length+' 位得獎')}
+  catch(e){document.getElementById('info').textContent='⚠ 連線失敗：'+e.message}
+}
+function pickers(g){return D.picks.filter(p=>p.picks[g]===D.champions[g]).length}
+function render(){
+  document.getElementById('title').textContent=D.eventName;document.title='🐙 '+D.eventName+' 開獎';
+  document.getElementById('chips').innerHTML=STEPS.map(s=>`<button class="chip ${s==='octo'?'octo':''} ${s===step?'on':''} ${shown[s]?'done':''}" onclick="go('${s}')">${s==='octo'?'🐙 章魚哥獎':GICON[s]+' '+s+'組冠軍'}</button>`).join('');
+  const o=document.getElementById('orb');o.classList.toggle('octo',step==='octo');
+  document.getElementById('oIc').textContent=step==='octo'?'🐙':GICON[step];
+  document.getElementById('oAw').textContent=step==='octo'?'章魚哥獎':step+'組冠軍';
+  if(!rolling)document.getElementById('oAct').textContent='✦ 點擊施法 ✦';
+  document.getElementById('info').textContent=step==='octo'
+    ?`共 ${D.picks.length} 位獅友參加預測｜猜中 ${D.minHits} 組以上即得獎`
+    :`${step}組共 ${D.players.filter(p=>p.g===step).length} 位選手`;
+}
+function go(s){if(rolling)return;step=s;stopScroll();render();
+  const r=document.getElementById('roller');r.classList.remove('tall');
+  if(shown[s])show(false);else{r.innerHTML='<div class="hint">✧ 等待命運揭曉 ✧</div>';document.getElementById('foot').textContent=''}}
+function scaleFor(n){return n<=1?1:n<=2?.8:n<=4?.62:n<=6?.5:n<=9?.42:n<=12?.36:n<=20?.3:n<=30?.25:n<=48?.21:.18}
+function colsFor(n){return n<=1?1:n<=4?2:n<=9?3:n<=12?4:n<=20?5:n<=30?6:n<=48?8:10}
+function toggle(){
+  if(!D)return;const r=document.getElementById('roller');
+  if(rolling){clearInterval(rolling);rolling=null;document.getElementById('altar').classList.remove('casting');shown[step]=true;show(true);render();return}
+  stopScroll();r.classList.remove('tall','win');
+  if(step!=='octo'){
+    if(!D.champions[step]){alert(step+'組冠軍還沒在後台設定');return}
+    const names=D.players.filter(p=>p.g===step);if(!names.length){alert('沒有選手資料');return}
+    r.innerHTML='<div class="champ"><div class="lbl">'+GICON[step]+' '+step+'組冠軍</div><div class="roll" id="rl"></div></div>';
+    rolling=setInterval(()=>{const p=names[Math.floor(Math.random()*names.length)];document.getElementById('rl').textContent=p.name},70);
+  }else{
+    if(GROUPS.some(g=>!D.champions[g])&&!confirm('還有組別沒設定冠軍，仍要開獎嗎？'))return;
+    if(!D.picks.length){alert('沒有登記資料');return}
+    const n=Math.max(1,Math.min(D.winners.length||1,60));
+    r.innerHTML=`<div class="grid" style="--f:${scaleFor(n)};grid-template-columns:repeat(${colsFor(n)},1fr)">${Array.from({length:n},(_,i)=>`<div class="card rolling"><div class="rl" id="rg${i}"></div></div>`).join('')}</div>`;
+    rolling=setInterval(()=>{for(let i=0;i<n;i++){const e=document.getElementById('rg'+i);if(e)e.textContent=D.picks[Math.floor(Math.random()*D.picks.length)].name}},60);
+  }
+  document.getElementById('altar').classList.add('casting');document.getElementById('oAct').textContent='✦ 停 ✦';
+  FX.hot=()=>{if(!rolling)return null;const a=document.getElementById('altar').getBoundingClientRect();return {x:a.left+a.width/2,y:a.bottom,w:a.width*.8}};
+}
+function show(anim){
+  const r=document.getElementById('roller');const f=document.getElementById('foot');
+  if(step!=='octo'){const lb=D.champions[step]||'';const m=lb.match(/^(.*?)（(.*)）$/);const nm=m?m[1]:lb,cl=m?m[2]:'';
+    r.innerHTML=`<div class="champ ${anim?'win':''}"><div class="lbl">👑 ${GICON[step]} ${step}組冠軍 👑</div><div class="nm">${esc(nm)}</div><div class="cl">${esc(cl)}</div><div class="ct">🐙 ${pickers(step)} 位獅友猜中</div></div>`;
+    f.textContent='';if(anim)FX.burstEl(r,320);return}
+  const W=D.winners;
+  if(!W.length){r.innerHTML=`<div class="champ ${anim?'win':''}"><div class="nm" style="font-size:clamp(28px,7vh,80px)">本次無人猜中 ${D.minHits} 組</div><div class="cl">章魚哥獎從缺 🐙</div></div>`;f.textContent='';return}
+  const n=W.length;
+  r.innerHTML=`<div class="grid" style="--f:${scaleFor(n)};grid-template-columns:repeat(${colsFor(n)},1fr)">${W.map((w,i)=>`<div class="card ${anim?'pop':''}" style="animation-delay:${anim?Math.min(i*.04,2.4):0}s">
+    <div class="cnm">${esc(w.name)}</div><div class="ccl">${esc(w.club)}</div><div class="czn">${esc(w.zone)}｜${esc(w.no)}</div><div class="chit ${w.hits>=3?'h3':''}">猜中 ${w.hits} 組${w.hits===4?' 🏆':''}</div></div>`).join('')}</div>`;
+  f.textContent=`🐙 恭喜 ${n} 位獅友獲得章魚哥獎！`;
+  if(anim){FX.burstEl(r,360);setTimeout(()=>FX.burstEl(r,240),700)}
+  requestAnimationFrame(()=>{if(r.scrollHeight>r.clientHeight+4){r.classList.add('tall');setTimeout(autoScroll,anim?3500:800)}});
+}
+function autoScroll(){stopScroll();const r=document.getElementById('roller');let dir=1,pause=0;
+  scrollT=setInterval(()=>{if(pause>0){pause--;return}r.scrollTop+=dir*1;if(r.scrollTop+r.clientHeight>=r.scrollHeight-1){dir=-1;pause=120}else if(r.scrollTop<=0&&dir<0){dir=1;pause=120}},30)}
+function stopScroll(){clearInterval(scrollT);scrollT=null}
+document.getElementById('roller').addEventListener('wheel',stopScroll);
+function toggleFS(){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
+document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();toggle()}
+  if(e.code==='ArrowRight'&&!rolling){go(STEPS[(STEPS.indexOf(step)+1)%STEPS.length])}if(e.code==='ArrowLeft'&&!rolling){go(STEPS[(STEPS.indexOf(step)+STEPS.length-1)%STEPS.length])}});
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🐙 章魚哥獎 後台</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif;background:#f4f1ea;color:#222}
+nav{display:flex;gap:4px;flex-wrap:wrap;background:linear-gradient(90deg,#1a0b3d,#3b1470);border-bottom:1px solid #d4af37;padding:8px 12px;align-items:center;position:sticky;top:0;z-index:5}
+nav b{color:#ffe9a8;margin-right:10px;font-size:17px}
+nav a,nav button{background:transparent;border:0;color:#e9d8a6;font-size:15px;padding:7px 12px;border-radius:6px;cursor:pointer;text-decoration:none;font-family:inherit}
+nav a:hover,nav button:hover{background:rgba(212,175,55,.2)}
+nav .sp{flex:1}
+#stat{color:#e9d8a6;font-size:13px}
+.page{padding:16px;max-width:1100px;margin:0 auto}
+.card{background:#fff;border-radius:10px;padding:16px 18px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+h2{margin:0 0 10px;font-size:19px;color:#4b1d8f}
+input[type=text],input[type=number],input[type=password],select,textarea{padding:8px 9px;border:1px solid #ccc;border-radius:6px;font-size:15px;font-family:inherit}
+textarea{width:100%;height:110px}
+.btn{padding:8px 14px;border:0;border-radius:6px;background:#4b1d8f;color:#fff;font-size:15px;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block}
+.btn.gray{background:#888}.btn.gold{background:#c9971c}.btn.red{background:#b3261e}
+.btn.sm{padding:3px 9px;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{border-bottom:1px solid #eee;padding:6px 5px;text-align:left;vertical-align:top}
+th{background:#faf6ee;position:sticky;top:0}
+.muted{color:#777;font-size:13px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.scroll{max-height:420px;overflow:auto}
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.gbox{border:1px solid #e5dccb;border-radius:8px;padding:10px}
+.gbox h3{margin:0 0 6px;font-size:16px;color:#4b1d8f}
+.pill{display:inline-block;background:#f1eafc;border-radius:12px;padding:2px 8px;margin:2px;font-size:13px}
+.hit{background:#e3f6e8;color:#1b6b34;font-weight:bold}
+.big{font-size:22px;font-weight:bold;color:#4b1d8f}
+.stats{display:flex;gap:18px;flex-wrap:wrap}
+.stats div{background:#faf6ee;border-radius:8px;padding:8px 14px}
+.toggle{display:flex;align-items:center;gap:8px;font-size:15px}
+.toggle input{width:20px;height:20px}
+#login{max-width:380px;margin:60px auto;text-align:center}
+</style>
+</head>
+<body>
+<nav>
+  <b>🐙 章魚哥獎 後台</b>
+  <a href="#sSet">設定</a><a href="#sPlayers">選手</a><a href="#sChamp">冠軍</a><a href="#sPicks">登記名單</a><a href="#sWin">得獎名單</a>
+  <span class="sp"></span><span id="stat"></span>
+  <a href="index.html" target="_blank">📱 登記頁</a><a href="reveal.html" target="_blank">✨ 開獎畫面</a>
+  <button onclick="reload()">⟳ 重新整理</button><button onclick="logout()">登出</button>
+</nav>
+
+<div class="page" id="login">
+  <div class="card"><h2>請輸入管理密碼</h2>
+    <div class="row" style="justify-content:center"><input type="password" id="pw" onkeydown="if(event.key==='Enter')login()"><button class="btn" onclick="login()">登入</button></div>
+    <p class="muted" id="loginMsg"></p></div>
+</div>
+
+<div class="page" id="app" style="display:none">
+  <div class="card" id="sSet">
+    <h2>活動設定</h2>
+    <div class="row"><input type="text" id="eventName" style="flex:1;min-width:240px" placeholder="活動名稱"></div>
+    <div class="row">
+      <label class="toggle"><input type="checkbox" id="open"> 開放獅友登記</label>
+      <label class="toggle"><input type="checkbox" id="published"> 公布結果（登記頁顯示冠軍與得獎名單）</label>
+      <label class="toggle">猜中 <input type="number" id="minHits" min="1" max="4" style="width:60px"> 組以上得獎</label>
+    </div>
+    <p class="muted">專區選單（一行一個）</p>
+    <textarea id="zones" style="height:140px"></textarea>
+    <div class="row" style="margin-top:8px"><input type="password" id="newPw" placeholder="新管理密碼（不改請留空）"><button class="btn" onclick="saveSettings()">儲存設定</button></div>
+  </div>
+
+  <div class="card" id="sPlayers">
+    <h2>選手資料 <span class="muted" id="pCount"></span></h2>
+    <p class="muted">欄位順序：組別、姓名、分會。組別寫「對唱、新人、獨唱、長青」（加不加「組」都可以）。可上傳 Excel / CSV，或從 Excel 複製貼上。對唱組姓名請填兩人，例如「林志聖、楊美枝」。</p>
+    <div class="row">
+      <input type="file" id="pFile" accept=".xlsx,.xls,.csv,.txt">
+      <button class="btn gray" onclick="dl('選手範例.csv','\uFEFF組別,姓名,分會\n對唱,林志聖、楊美枝,台北市日月光獅子會\n新人,王小明,台北市OO獅子會\n獨唱,陳大華,台北市OO獅子會\n長青,李美麗,台北市OO獅子會\n')">下載範例 CSV</button>
+    </div>
+    <textarea id="pPaste" placeholder="對唱	林志聖、楊美枝	台北市日月光獅子會&#10;新人	王小明	台北市OO獅子會"></textarea>
+    <div class="row" style="margin-top:8px"><button class="btn" onclick="importPaste(false)">取代選手名單</button><button class="btn gold" onclick="importPaste(true)">加入選手</button></div>
+    <div class="g4" id="pGroups"></div>
+  </div>
+
+  <div class="card" id="sChamp">
+    <h2>👑 上傳冠軍（得獎名單）</h2>
+    <p class="muted">比賽結束後，選出各組冠軍按「儲存冠軍」，系統會自動算出章魚哥獎得獎者。也可以貼上「組別、姓名」兩欄。</p>
+    <div class="g4" id="champSel"></div>
+    <textarea id="cPaste" style="height:70px;margin-top:10px" placeholder="對唱	林志聖、楊美枝&#10;新人	王小明"></textarea>
+    <div class="row" style="margin-top:8px"><button class="btn gray" onclick="pasteChamps()">套用貼上的冠軍</button><button class="btn gold" onclick="saveChamps()">儲存冠軍並計算得獎者</button></div>
+  </div>
+
+  <div class="card" id="sPicks">
+    <h2>預測登記名單</h2>
+    <div class="stats" id="stats"></div>
+    <div class="row" style="margin-top:12px"><input type="text" id="q" placeholder="搜尋姓名、分會、手機" oninput="renderPicks()" style="flex:1;min-width:200px">
+      <select id="zf" onchange="renderPicks()"><option value="">全部專區</option></select>
+      <button class="btn gray" onclick="exportPicks()">匯出 CSV</button><button class="btn red" onclick="clearPicks()">清空登記</button></div>
+    <div class="scroll"><table><thead><tr><th>編號</th><th>時間</th><th>專區</th><th>分會</th><th>姓名</th><th>手機</th><th>對唱</th><th>新人</th><th>獨唱</th><th>長青</th><th>猜中</th><th></th></tr></thead><tbody id="pickTable"></tbody></table></div>
+  </div>
+
+  <div class="card" id="sWin">
+    <h2>🐙 章魚哥獎得獎名單 <span class="muted" id="wCount"></span></h2>
+    <div class="row"><a class="btn gold" href="reveal.html" target="_blank">✨ 開啟開獎畫面</a><button class="btn gray" onclick="exportWinners()">匯出 CSV</button></div>
+    <div class="scroll"><table><thead><tr><th>兌獎編號</th><th>驗證碼</th><th>專區</th><th>分會</th><th>姓名</th><th>手機</th><th>猜中</th><th>猜中組別</th></tr></thead><tbody id="winTable"></tbody></table></div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+let D=null,players=[],champ={};
+const pw=()=>localStorage.getItem('octo_pw')||'';
+const stat=t=>document.getElementById('stat').textContent=t;
+async function admin(body){body.password=pw();const r=await apiPost(body);if(r.error==='auth'){localStorage.removeItem('octo_pw');showLogin('密碼錯誤');throw new Error('密碼錯誤')}return r}
+function showLogin(m){document.getElementById('login').style.display='';document.getElementById('app').style.display='none';document.getElementById('loginMsg').textContent=m||''}
+async function login(){localStorage.setItem('octo_pw',document.getElementById('pw').value);reload()}
+function logout(){localStorage.removeItem('octo_pw');showLogin()}
+async function reload(){
+  if(!pw())return showLogin();
+  stat('☁ 讀取中…');
+  try{const r=await admin({action:'getAll'});if(!r.ok)throw new Error(r.error);D=r.data;players=D.players.slice();champ={...D.champions};
+    document.getElementById('login').style.display='none';document.getElementById('app').style.display='';renderAll();stat('☁ 已連線試算表 '+new Date().toLocaleTimeString('zh-TW',{hour12:false}))}
+  catch(e){stat('⚠ '+e.message)}
+}
+function renderAll(){
+  document.getElementById('eventName').value=D.eventName;document.getElementById('open').checked=D.open;
+  document.getElementById('published').checked=D.published;document.getElementById('minHits').value=D.minHits;
+  document.getElementById('zones').value=D.zones.join('\n');
+  document.getElementById('zf').innerHTML='<option value="">全部專區</option>'+D.zones.map(z=>`<option>${esc(z)}</option>`).join('');
+  renderPlayers();renderChamps();renderPicks();renderWinners();
+}
+async function saveSettings(){
+  const d={eventName:document.getElementById('eventName').value.trim(),open:document.getElementById('open').checked,published:document.getElementById('published').checked,
+    minHits:document.getElementById('minHits').value,zones:document.getElementById('zones').value.split('\n').map(s=>s.trim()).filter(Boolean)};
+  const np=document.getElementById('newPw').value.trim();if(np){if(!confirm('確定把管理密碼改成「'+np+'」？'))return;d.newPassword=np}
+  stat('☁ 儲存中…');const r=await admin({action:'saveSettings',data:d});
+  if(r.ok){if(np){localStorage.setItem('octo_pw',np);document.getElementById('newPw').value=''}alert('設定已儲存');reload()}else alert('儲存失敗：'+r.error)
+}
+// ===== 選手 =====
+function normG(g){g=String(g||'').trim().replace(/組$/,'');return GROUPS.includes(g)?g:null}
+function parseCSV(t){t=t.replace(/^\uFEFF/,'');const rows=[];let row=[],cur='',q=false;const delim=t.split('\n')[0].includes('\t')?'\t':',';
+  for(let i=0;i<t.length;i++){const c=t[i];
+    if(q){if(c=='"'){if(t[i+1]=='"'){cur+='"';i++}else q=false}else cur+=c}
+    else if(c=='"')q=true;else if(c==delim){row.push(cur);cur=''}
+    else if(c=='\n'||c=='\r'){if(c=='\r'&&t[i+1]=='\n')i++;row.push(cur);rows.push(row);row=[];cur=''}else cur+=c}
+  row.push(cur);rows.push(row);return rows.map(r=>r.map(c=>String(c??'').trim())).filter(r=>r.some(c=>c))}
+function toPlayers(rows){const bad=[],list=[];
+  rows.forEach(r=>{if(/組別|姓名/.test(r.join('')))return;const g=normG(r[0]);if(!g){bad.push(r.join(' '));return}if(!r[1])return;list.push({g,name:r[1],club:r[2]||''})});
+  if(bad.length)alert('以下資料組別看不懂，已略過：\n'+bad.slice(0,10).join('\n'));return list}
+async function setPlayers(list,append){
+  let all=append?players.concat(list):list;const seen=new Set();all=all.filter(p=>{const k=p.g+'|'+label(p);if(seen.has(k))return false;seen.add(k);return true});
+  if(D.picks.length&&!confirm(`已有 ${D.picks.length} 筆登記。更改選手名單後，已登記的預測不會變動，確定？`))return;
+  stat('☁ 儲存中…');const r=await admin({action:'savePlayers',players:all});
+  if(r.ok){alert(`選手名單已儲存，共 ${all.length} 位`);reload()}else alert('儲存失敗：'+r.error)}
+document.getElementById('pFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();
+  if(/\.(xlsx|xls)$/i.test(f.name)){rd.onload=ev=>{const wb=XLSX.read(ev.target.result,{type:'array'});const ws=wb.Sheets[wb.SheetNames[0]];
+      setPlayers(toPlayers(XLSX.utils.sheet_to_json(ws,{header:1,raw:false}).map(r=>r.map(c=>String(c??'').trim())).filter(r=>r.some(c=>c))),false)};rd.readAsArrayBuffer(f)}
+  else{rd.onload=ev=>{const t=ev.target.result;if(t.includes('\uFFFD')){const r2=new FileReader();r2.onload=e2=>setPlayers(toPlayers(parseCSV(e2.target.result)),false);r2.readAsText(f,'big5');return}
+      setPlayers(toPlayers(parseCSV(t)),false)};rd.readAsText(f,'utf-8')}
+  e.target.value=''};
+function importPaste(append){const t=document.getElementById('pPaste').value;if(!t.trim())return;setPlayers(toPlayers(parseCSV(t)),append);document.getElementById('pPaste').value=''}
+function delPlayer(i){if(!confirm('刪除 '+label(players[i])+'？'))return;const l=players.slice();l.splice(i,1);setPlayers(l,false)}
+function countPick(g,lb){return D.picks.filter(p=>p.picks[g]===lb).length}
+function renderPlayers(){
+  document.getElementById('pCount').textContent=`（共 ${players.length} 位）`;
+  document.getElementById('pGroups').innerHTML=GROUPS.map(g=>`<div class="gbox"><h3>${GICON[g]} ${g}組（${players.filter(p=>p.g===g).length}）</h3>
+    ${players.map((p,i)=>p.g!==g?'':`<div class="row" style="margin:4px 0;justify-content:space-between"><span>${esc(p.name)} <span class="muted">${esc(p.club)}</span> <span class="pill">${countPick(g,label(p))} 票</span></span><button class="btn gray sm" onclick="delPlayer(${i})">刪</button></div>`).join('')||'<span class="muted">尚無選手</span>'}</div>`).join('')}
+// ===== 冠軍 =====
+function renderChamps(){document.getElementById('champSel').innerHTML=GROUPS.map(g=>`<div class="gbox"><h3>${GICON[g]} ${g}組冠軍</h3>
+  <select style="width:100%" onchange="champ['${g}']=this.value"><option value="">（尚未決定）</option>${players.filter(p=>p.g===g).map(p=>`<option ${champ[g]===label(p)?'selected':''}>${esc(label(p))}</option>`).join('')}</select></div>`).join('')}
+function pasteChamps(){const rows=parseCSV(document.getElementById('cPaste').value);const miss=[];
+  rows.forEach(r=>{const g=normG(r[0]);if(!g)return;const nm=r[1]||'';const p=players.find(p=>p.g===g&&(label(p)===nm||p.name===nm));if(p)champ[g]=label(p);else miss.push(r.join(' '))});
+  renderChamps();if(miss.length)alert('以下找不到對應選手：\n'+miss.join('\n'))}
+async function saveChamps(){const miss=GROUPS.filter(g=>!champ[g]);
+  if(miss.length&&!confirm('還沒選：'+miss.join('、')+'組。確定先儲存？'))return;
+  stat('☁ 計算中…');const r=await admin({action:'saveChampions',champions:champ});
+  if(r.ok){alert(`冠軍已儲存，章魚哥獎得獎者共 ${r.winners} 位`);reload()}else alert('儲存失敗：'+r.error)}
+// ===== 登記名單 =====
+function hitsOf(p){return GROUPS.filter(g=>D.champions[g]&&p.picks[g]===D.champions[g])}
+function renderPicks(){
+  const q=document.getElementById('q').value.trim(),zf=document.getElementById('zf').value;
+  const byZ={};D.picks.forEach(p=>byZ[p.zone]=(byZ[p.zone]||0)+1);
+  document.getElementById('stats').innerHTML=`<div>登記人數<br><span class="big">${D.picks.length}</span></div>`+Object.entries(byZ).map(([z,n])=>`<div>${esc(z)}<br><span class="big">${n}</span></div>`).join('');
+  const list=D.picks.map((p,i)=>({...p,i})).filter(p=>(!zf||p.zone===zf)&&(!q||[p.name,p.club,p.phone,p.no,p.code].join(' ').toUpperCase().includes(q.toUpperCase())||[p.name].join('').includes(q)));
+  document.getElementById('pickTable').innerHTML=list.map(p=>{const h=hitsOf(p);
+    return `<tr><td>${esc(p.no)}<div class="muted">${esc(p.code)}</div></td><td>${esc(p.time)}</td><td>${esc(p.zone)}</td><td>${esc(p.club)}</td><td>${esc(p.name)}</td><td>${esc(p.phone)}</td>${GROUPS.map(g=>`<td class="${h.includes(g)?'hit':''}">${esc(p.picks[g])}</td>`).join('')}<td>${h.length}</td><td><button class="btn gray sm" onclick="delPick('${esc(p.phone)}','${esc(p.name)}')">刪</button></td></tr>`}).join('')||'<tr><td colspan=12 class="muted">尚無登記</td></tr>'}
+async function delPick(ph,nm){if(!confirm(`刪除 ${nm}（${ph}）的登記？`))return;const r=await admin({action:'deletePick',phone:ph});if(r.ok)reload();else alert(r.error)}
+async function clearPicks(){if(!confirm('確定清空全部登記？此動作無法復原，建議先匯出 CSV。'))return;if(prompt('請輸入「清空」確認')!=='清空')return;
+  const r=await admin({action:'clearPicks'});if(r.ok)reload();else alert(r.error)}
+const q=s=>`"${String(s??'').replace(/"/g,'""')}"`;
+function exportPicks(){let o='\uFEFF兌獎編號,驗證碼,時間,專區,分會,姓名,手機,'+GROUPS.map(g=>g+'組').join(',')+',猜中組數\n';
+  D.picks.forEach(p=>o+=[p.no,p.code,p.time,p.zone,p.club,p.name,'\t'+p.phone].concat(GROUPS.map(g=>p.picks[g]),[hitsOf(p).length]).map(q).join(',')+'\n');dl(D.eventName+'_預測登記.csv',o)}
+function renderWinners(){document.getElementById('wCount').textContent=`（${D.winners.length} 位，猜中 ${D.minHits} 組以上）`;
+  document.getElementById('winTable').innerHTML=D.winners.map((w,i)=>`<tr><td>${esc(w.no)}</td><td>${esc(w.code)}</td><td>${esc(w.zone)}</td><td>${esc(w.club)}</td><td>${esc(w.name)}</td><td>${esc(w.phone)}</td><td>${w.hits}</td><td>${esc(w.hitGroups.join('、'))}</td></tr>`).join('')
+    ||`<tr><td colspan=8 class="muted">${Object.keys(D.champions).length?'沒有人猜中 '+D.minHits+' 組以上':'尚未儲存冠軍'}</td></tr>`}
+function exportWinners(){let o='\uFEFF兌獎編號,驗證碼,專區,分會,姓名,手機,猜中組數,猜中組別\n';D.winners.forEach(w=>o+=[w.no,w.code,w.zone,w.club,w.name,'\t'+w.phone,w.hits,w.hitGroups.join('、')].map(q).join(',')+'\n');dl(D.eventName+'_章魚哥獎得獎名單.csv',o)}
+function dl(name,text){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'}));a.download=name;a.click()}
+reload();
+</script>
+</body>
+</html>
