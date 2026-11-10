@@ -113,10 +113,9 @@ function render(){
   if(D.open&&dlMs()&&nowMs()>=dlMs())D.open=false;
   if(!D.open){m.innerHTML='<div class="box closed">🔒 預測登記已截止<br><span style="opacity:.75;font-size:15px">開獎後可在下方輸入手機查詢結果</span></div>';return}
   const byG=g=>D.players.filter(p=>p.g===g);
-  const clubs=[...new Set(D.players.map(p=>p.club).filter(Boolean))];
   m.innerHTML=`<div class="box"><h2>📝 獅友資料</h2><div class="cd" id="cd"></div>
     <label class="f">專區</label><select id="zone"><option value="">請選擇專區</option>${D.zones.map(z=>`<option>${esc(z)}</option>`).join('')}</select>
-    <label class="f">分會</label><input id="club" list="clubs" placeholder="例如：台北市日月光獅子會" autocomplete="off"><datalist id="clubs">${clubs.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
+    <label class="f">分會</label><input id="club" placeholder="請填寫您的分會，例如：日月光" autocomplete="off">
     <label class="f">姓名</label><input id="name" placeholder="請輸入姓名" autocomplete="name">
     <label class="f">手機號碼</label><input id="phone" inputmode="numeric" maxlength="12" placeholder="09xxxxxxxx" autocomplete="tel">
   </div>
