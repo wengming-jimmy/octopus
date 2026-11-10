@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>🐙 章魚哥獎 預測登記</title>
+<title>2026-2027年度歌唱才藝總決賽｜章魚哥預測系統</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
@@ -65,6 +65,8 @@ input,select{width:100%;font-size:17px;padding:12px;border-radius:10px;border:1p
 .ticket .warn{margin-top:10px;font-size:14px;font-weight:bold;color:#7a1020}
 .ticket .wm{position:absolute;right:-10px;bottom:-18px;font-size:110px;opacity:.12;transform:rotate(-15deg);pointer-events:none}
 .ticket.won{box-shadow:0 0 36px #7CFFB2}
+.cd{margin-top:10px;text-align:center;font-size:15px;color:#ffe9a8}
+.cd b{font-size:20px;font-family:Consolas,monospace;color:#fff;text-shadow:0 0 10px #d4af37}
 .foot{text-align:center;opacity:.5;font-size:12px;margin-top:24px}
 .loading{text-align:center;padding:40px 0;opacity:.8}
 </style>
@@ -74,8 +76,8 @@ input,select{width:100%;font-size:17px;padding:12px;border-radius:10px;border:1p
 <div class="wrap">
   <header>
     <div class="octo">🐙</div>
-    <h1 id="title">章魚哥獎</h1>
-    <div class="sub">✦ 預測四組冠軍・猜中就有獎 ✦</div>
+    <h1 id="title">2026-2027年度歌唱才藝總決賽</h1>
+    <div class="sub" style="font-size:18px;color:#ffd1c2;letter-spacing:4px">🐙 章魚哥預測系統</div><div class="sub">✦ 預測四組冠軍・猜中就有獎 ✦</div>
   </header>
   <div class="rule" id="rule"></div>
   <div id="main"><div class="loading">✧ 讀取中… ✧</div></div>
@@ -91,21 +93,28 @@ input,select{width:100%;font-size:17px;padding:12px;border-radius:10px;border:1p
 <script src="common.js"></script>
 <script>
 const FX=starfield(document.getElementById('fx'),{n:110});
-let D=null,sel={};
+let D=null,sel={},off=0,cdT=null;
+function dlMs(){if(!D.deadline)return 0;const d=D.deadline.replace(' ','T');const t=new Date(d+(d.length<=16?':00':'')+'+08:00').getTime();return isNaN(t)?0:t}
+function nowMs(){return Date.now()+off}
+function tick(){const e=document.getElementById('cd');const dl=dlMs();if(!dl)return;const left=dl-nowMs();
+  if(left<=0){clearInterval(cdT);D.open=false;if(document.getElementById('goBtn'))render();return}
+  if(!e)return;const d=Math.floor(left/864e5),h=Math.floor(left/36e5)%24,m=Math.floor(left/6e4)%60,s=Math.floor(left/1e3)%60;
+  e.innerHTML=`⏰ 距離截止還有 <b>${d?d+' 天 ':''}${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</b>`}
 async function init(){
-  try{const r=await apiGet();if(!r.ok)throw 0;D=r.data;render()}
+  try{const r=await apiGet();if(!r.ok)throw 0;D=r.data;off=(D.now||Date.now())-Date.now();render();if(dlMs()){cdT=setInterval(tick,1000);tick()}}
   catch(e){document.getElementById('main').innerHTML='<div class="box closed">連線失敗，請稍後重新整理。</div>'}
 }
 function render(){
-  document.getElementById('title').textContent=D.eventName;document.title='🐙 '+D.eventName;
-  document.getElementById('rule').innerHTML=`在 <b>對唱、新人、獨唱、長青</b> 四組中，各選一位你認為會拿下冠軍的選手。<br>四組中猜中 <b>${D.minHits} 組以上</b>冠軍，就能獲得 <b>🐙 章魚哥獎</b>！每支手機限登記一次。`;
+  document.getElementById('title').textContent=D.eventName;document.title=D.eventName+'｜章魚哥預測系統';
+  document.getElementById('rule').innerHTML=`在 <b>對唱、新人、獨唱、長青</b> 四組中，各選一位你認為會拿下冠軍的選手。<br>四組中猜中 <b>${D.minHits} 組以上</b>冠軍，就能獲得 <b>🐙 章魚哥獎</b>！每支手機限登記一次。`+(D.deadline?`<br>⏰ 截止時間：<b>${esc(D.deadline.replace('T',' ').replace(/-/g,'/'))}</b>`:'');
   document.getElementById('lookup').style.display='';
   const m=document.getElementById('main');
   if(D.published){m.innerHTML=resultHTML();return}
+  if(D.open&&dlMs()&&nowMs()>=dlMs())D.open=false;
   if(!D.open){m.innerHTML='<div class="box closed">🔒 預測登記已截止<br><span style="opacity:.75;font-size:15px">開獎後可在下方輸入手機查詢結果</span></div>';return}
   const byG=g=>D.players.filter(p=>p.g===g);
   const clubs=[...new Set(D.players.map(p=>p.club).filter(Boolean))];
-  m.innerHTML=`<div class="box"><h2>📝 獅友資料</h2>
+  m.innerHTML=`<div class="box"><h2>📝 獅友資料</h2><div class="cd" id="cd"></div>
     <label class="f">專區</label><select id="zone"><option value="">請選擇專區</option>${D.zones.map(z=>`<option>${esc(z)}</option>`).join('')}</select>
     <label class="f">分會</label><input id="club" list="clubs" placeholder="例如：台北市日月光獅子會" autocomplete="off"><datalist id="clubs">${clubs.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
     <label class="f">姓名</label><input id="name" placeholder="請輸入姓名" autocomplete="name">

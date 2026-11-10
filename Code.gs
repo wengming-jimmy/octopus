@@ -13,9 +13,9 @@ function write(n,head,data){const s=sh(n,head);s.clearContents();const all=[head
 
 function setup(){ // 第一次執行會建立分頁與預設值
   const s=sh(T.settings,['項目','值']);
-  if(s.getLastRow()<2){s.getRange(2,1,8,2).setNumberFormat('@').setValues([
-    ['eventName','獅友歌唱比賽 章魚哥獎'],['adminPassword','octo2127'],['open','TRUE'],
-    ['minHits','2'],['published','FALSE'],['seq','0'],['zones',ZONES.join(',')],['groups',GROUPS.join(',')]])}
+  if(s.getLastRow()<2){s.getRange(2,1,9,2).setNumberFormat('@').setValues([
+    ['eventName','2026-2027年度歌唱才藝總決賽'],['adminPassword','octo2127'],['open','TRUE'],
+    ['minHits','2'],['published','FALSE'],['seq','0'],['deadline',''],['zones',ZONES.join(',')],['groups',GROUPS.join(',')]])}
   sh(T.players,['組別','姓名','分會']);sh(T.picks,PICK_HEAD).getRange('E:E').setNumberFormat('@');
   sh(T.champs,['組別','冠軍']);sh(T.winners,['兌獎編號','驗證碼','專區','分會','姓名','手機','猜中組數','猜中組別']);
   const d=ss().getSheetByName('工作表1');if(d&&ss().getSheets().length>1&&d.getLastRow()===0)ss().deleteSheet(d);
@@ -34,14 +34,16 @@ function picks(){return rows(T.picks).map(r=>{const p={time:r[0],zone:r[1],club:
 function winners(st){const ch=champs(),min=Number(st.minHits)||2;
   return picks().map(p=>{const hit=GROUPS.filter(g=>ch[g]&&p.picks[g]===ch[g]);return {...p,hits:hit.length,hitGroups:hit}})
     .filter(p=>p.hits>=min).sort((a,b)=>b.hits-a.hits||(a.time<b.time?-1:1))}
+function deadlineMs(st){const d=String(st.deadline||'').trim();if(!d)return 0;const t=new Date(d.replace(' ','T')+(d.length<=16?':00':'')+'+08:00').getTime();return isNaN(t)?0:t}
+function isOpen(st){const dl=deadlineMs(st);return TRUE(st.open)&&(!dl||Date.now()<dl)}
 function publicData(){const st=settings();const pub=TRUE(st.published);
-  return {eventName:st.eventName,open:TRUE(st.open),minHits:Number(st.minHits)||2,published:pub,
+  return {eventName:st.eventName,open:isOpen(st),openSwitch:TRUE(st.open),deadline:st.deadline||'',now:Date.now(),minHits:Number(st.minHits)||2,published:pub,
     zones:(st.zones||ZONES.join(',')).split(',').map(s=>s.trim()).filter(Boolean),groups:GROUPS,players:players(),count:rows(T.picks).length,
     champions:pub?champs():{},winners:pub?winners(st).map(w=>({no:w.no,zone:w.zone,club:w.club,name:w.name,phone:mask(w.phone),hits:w.hits,hitGroups:w.hitGroups})):[]}}
 function writeWinners(st){write(T.winners,['兌獎編號','驗證碼','專區','分會','姓名','手機','猜中組數','猜中組別'],winners(st).map(w=>[w.no,w.code,w.zone,w.club,w.name,w.phone,String(w.hits),w.hitGroups.join('、')]))}
 
 function submit(b){
-  const st=settings();if(!TRUE(st.open))return {ok:false,error:'登記已截止'};
+  const st=settings();if(!isOpen(st))return {ok:false,error:'預測登記已截止'};
   const zones=(st.zones||'').split(',').map(s=>s.trim());
   const phone=String(b.phone||'').replace(/\D/g,'');const name=String(b.name||'').trim(),club=String(b.club||'').trim(),zone=String(b.zone||'').trim();
   if(zones.indexOf(zone)<0)return {ok:false,error:'請選擇專區'};
@@ -63,20 +65,24 @@ function mine(b){const phone=String(b.phone||'').replace(/\D/g,'');const st=sett
   if(r.published){const ch=champs();r.champions=ch;r.hits=GROUPS.filter(g=>ch[g]&&p.picks[g]===ch[g]);r.win=r.hits.length>=(Number(st.minHits)||2)}
   return r}
 
-function doGet(){return out({ok:true,data:publicData()})}
+function doGet(){const c=CacheService.getScriptCache();let j=c.get('pub');if(!j){j=JSON.stringify(publicData());try{c.put('pub',j,20)}catch(e){}}
+  const d=JSON.parse(j);d.now=Date.now();return out({ok:true,data:d})}
+function bust(){try{CacheService.getScriptCache().remove('pub')}catch(e){}}
 function doPost(e){
-  const lock=LockService.getScriptLock();lock.waitLock(20000);
+  const lock=LockService.getScriptLock();if(!lock.tryLock(30000))return out({ok:false,error:'目前登記人數較多，請再按一次送出'});
   try{
     const b=JSON.parse(e.postData.contents);
-    if(b.action==='submit')return out(submit(b));
+    if(b.action==='submit'){const r=submit(b);if(r.ok)bust();return out(r)}
     if(b.action==='mine')return out(mine(b));
     const st=settings();
     if(String(b.password)!==String(st.adminPassword))return out({ok:false,error:'auth'});
+    if(b.action!=='getAll')bust();
     if(b.action==='check')return out({ok:true});
     if(b.action==='getAll')return out({ok:true,data:{...publicData(),champions:champs(),picks:picks(),winners:winners(st),published:TRUE(st.published)}});
     if(b.action==='saveSettings'){const d=b.data;
-      if(d.eventName!==undefined)setSetting('eventName',d.eventName||'歌唱比賽 章魚哥獎');
+      if(d.eventName!==undefined)setSetting('eventName',d.eventName||'2026-2027年度歌唱才藝總決賽');
       if(d.open!==undefined)setSetting('open',d.open?'TRUE':'FALSE');
+      if(d.deadline!==undefined)setSetting('deadline',String(d.deadline||'').replace('T',' '));
       if(d.published!==undefined)setSetting('published',d.published?'TRUE':'FALSE');
       if(d.minHits!==undefined){setSetting('minHits',Math.max(1,Math.min(4,parseInt(d.minHits)||2)));writeWinners(settings())}
       if(d.zones!==undefined)setSetting('zones',d.zones.map(s=>String(s).trim()).filter(Boolean).join(','));
