@@ -63,7 +63,7 @@ th{background:#faf6ee;position:sticky;top:0}
     <div class="row">
       <label class="toggle"><input type="checkbox" id="open"> 開放獅友登記</label>
       <label class="toggle"><input type="checkbox" id="published"> 公布結果（登記頁顯示冠軍與得獎名單）</label>
-      <label class="toggle">⏰ 截止時間 <input type="datetime-local" id="deadline" style="padding:6px"></label>
+      <label class="toggle">⏰ 截止時間 <input type="date" id="dlDate" style="padding:6px"> <select id="dlTime" style="padding:6px"></select> <button type="button" class="btn ghost" style="padding:4px 10px" onclick="dlDate.value=''">清除</button></label>
       <label class="toggle">猜中 <input type="number" id="minHits" min="1" max="4" style="width:60px"> 組以上得獎</label>
     </div>
     <p class="muted">「開放獅友登記」是總開關；有設截止時間的話，時間一到自動停止登記（台灣時間）。截止時間留空就只看總開關。</p>
@@ -126,14 +126,19 @@ async function reload(){
   catch(e){stat('⚠ '+e.message)}
 }
 function renderAll(){
-  document.getElementById('eventName').value=D.eventName;document.getElementById('open').checked=D.openSwitch;document.getElementById('deadline').value=(D.deadline||'').replace(' ','T').slice(0,16);
+  document.getElementById('eventName').value=D.eventName;document.getElementById('open').checked=D.openSwitch;setDL(D.deadline||'');
   document.getElementById('published').checked=D.published;document.getElementById('minHits').value=D.minHits;
   document.getElementById('zones').value=D.zones.join('\n');
   document.getElementById('zf').innerHTML='<option value="">全部專區</option>'+D.zones.map(z=>`<option>${esc(z)}</option>`).join('');
   renderPlayers();renderChamps();renderPicks();renderWinners();
 }
+function setDL(v){v=String(v).replace('T',' ').trim();const [d,t]=v.split(' ');const sel=document.getElementById('dlTime');
+  const ts=[];for(let h=0;h<=24;h++)for(const m of ['00','30']){if(h===24&&m==='30')continue;ts.push(String(h).padStart(2,'0')+':'+m)}
+  const cur=(t||'24:00').slice(0,5);if(!ts.includes(cur))ts.push(cur);
+  sel.innerHTML=ts.map(x=>`<option${x===cur?' selected':''}>${x}</option>`).join('');document.getElementById('dlDate').value=d||''}
+function getDL(){const d=document.getElementById('dlDate').value;return d?d+' '+document.getElementById('dlTime').value:''}
 async function saveSettings(){
-  const d={eventName:document.getElementById('eventName').value.trim(),open:document.getElementById('open').checked,deadline:document.getElementById('deadline').value,published:document.getElementById('published').checked,
+  const d={eventName:document.getElementById('eventName').value.trim(),open:document.getElementById('open').checked,deadline:getDL(),published:document.getElementById('published').checked,
     minHits:document.getElementById('minHits').value,zones:document.getElementById('zones').value.split('\n').map(s=>s.trim()).filter(Boolean)};
   const np=document.getElementById('newPw').value.trim();if(np){if(!confirm('確定把管理密碼改成「'+np+'」？'))return;d.newPassword=np}
   stat('☁ 儲存中…');const r=await admin({action:'saveSettings',data:d});
