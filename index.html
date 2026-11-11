@@ -78,6 +78,7 @@ input,select{width:100%;font-size:17px;padding:12px;border-radius:10px;border:1p
     <div class="octo">🐙</div>
     <h1 id="title">2026-2027年度歌唱才藝總決賽</h1>
     <div class="sub" style="font-size:18px;color:#ffd1c2;letter-spacing:4px">🐙 章魚哥預測系統</div><div class="sub">✦ 預測四組冠軍・猜中就有獎 ✦</div>
+    <div id="dlBanner" style="display:none;margin:14px auto 0;max-width:520px;padding:10px 16px;border-radius:14px;border:1px solid rgba(255,207,107,.6);background:linear-gradient(135deg,rgba(255,207,107,.18),rgba(181,123,255,.18));box-shadow:0 0 18px rgba(255,207,107,.35);color:#ffe9a8;font-size:18px;line-height:1.6"></div>
   </header>
   <div class="rule" id="rule"></div>
   <div id="main"><div class="loading">✧ 讀取中… ✧</div></div>
@@ -104,7 +105,13 @@ async function init(){
   try{const r=await apiGet();if(!r.ok)throw 0;D=r.data;off=(D.now||Date.now())-Date.now();render();if(dlMs()){cdT=setInterval(tick,1000);tick()}}
   catch(e){document.getElementById('main').innerHTML='<div class="box closed">連線失敗，請稍後重新整理。</div>'}
 }
+function dlText(){const v=String(D.deadline).replace('T',' ').trim();const [d,t]=v.split(' ');const [y,mo,da]=d.split('-').map(Number);
+  const wd='日一二三四五六'[new Date(y,mo-1,da).getDay()];return `${y}年${mo}月${da}日（${wd}）${(t||'').slice(0,5)}`}
+function banner(){const b=document.getElementById('dlBanner');if(!D||!D.deadline||!dlMs()){b.style.display='none';return}
+  b.style.display='';const left=dlMs()-nowMs();
+  b.innerHTML=`⏰ 預測截止：<b style="color:#fff">${dlText()}</b>`+(left>0?'':'<br><span style="color:#ffb3b3">已截止</span>')}
 function render(){
+  banner();
   document.getElementById('title').textContent=D.eventName;document.title=D.eventName+'｜章魚哥預測系統';
   document.getElementById('rule').innerHTML=`在 <b>對唱、新人、獨唱、長青</b> 四組中，各選一位你認為會拿下冠軍的選手。<br>四組中猜中 <b>${D.minHits} 組以上</b>冠軍，就能獲得 <b>🐙 章魚哥獎</b>！每支手機限登記一次。`+(D.deadline?`<br>⏰ 截止時間：<b>${esc(D.deadline.replace('T',' ').replace(/-/g,'/'))}</b>`:'');
   document.getElementById('lookup').style.display='';
