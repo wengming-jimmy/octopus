@@ -69,6 +69,59 @@ input,select{width:100%;font-size:17px;padding:12px;border-radius:10px;border:1p
 .cd b{font-size:20px;font-family:Consolas,monospace;color:#fff;text-shadow:0 0 10px #d4af37}
 .foot{text-align:center;opacity:.5;font-size:12px;margin-top:24px}
 .loading{text-align:center;padding:40px 0;opacity:.8}
+
+body{font-size:17px;-webkit-text-size-adjust:100%}
+.wrap{padding-bottom:110px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 0}
+.steps div{padding:10px 6px;border-radius:12px;background:rgba(20,8,50,.55);border:1px solid rgba(212,175,55,.45);text-align:center;font-size:14px;line-height:1.45}
+.steps b{display:block;font-size:22px;margin-bottom:2px}
+.rule{text-align:center}
+.box h2 .num{display:inline-grid;place-items:center;width:30px;height:30px;margin-right:6px;border-radius:50%;background:#d4af37;color:#2a0f55;font-size:17px;vertical-align:2px}
+label.f{font-size:16px;font-weight:bold}
+label.f small{font-weight:normal;opacity:.7;margin-left:6px}
+input,select{font-size:18px;min-height:52px}
+input.bad,select.bad{border:2px solid #ff6b6b;box-shadow:0 0 0 3px rgba(255,107,107,.3)}
+.hint{min-height:0;font-size:14px;color:#ff9b9b;margin-top:4px}
+.chips{position:sticky;top:0;z-index:5;display:flex;gap:6px;overflow-x:auto;margin:0 -16px 4px;padding:10px 16px;background:rgba(18,6,46,.96);border-bottom:1px solid rgba(212,175,55,.35)}
+.chip{flex:1 0 auto;padding:8px 12px;border-radius:20px;border:1px solid rgba(212,175,55,.6);background:rgba(255,255,255,.06);color:#ffe9a8;font-size:15px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.chip.done{background:#d4af37;color:#2a0f55;font-weight:bold}
+.srch{margin-top:10px}
+.grp{scroll-margin-top:70px}
+.grp h3{font-size:19px}
+.grp h3 .st{font-size:14px}
+.grp.done h3 .st{color:#7CFFB2;opacity:1;font-weight:bold}
+.opts{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+.opt{min-height:64px;padding:12px 8px;display:flex;flex-direction:column;justify-content:center;font-family:inherit;color:inherit;font-size:inherit}
+.opt .n{font-size:18px;line-height:1.35}
+.opt .c{font-size:14px}
+.opt:focus-visible{outline:3px solid #fff}
+.opt.hide{display:none}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(12,4,34,.96);border-top:1px solid #d4af37;box-shadow:0 -6px 24px rgba(0,0,0,.5)}
+.bar .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.bar .pg{flex:0 0 auto;font-size:15px;line-height:1.3;text-align:center}
+.bar .pg b{display:block;font-size:22px;color:#ffe9a8}
+.bar .go{margin:0;flex:1;padding:14px;font-size:19px;letter-spacing:2px}
+.dots{display:flex;gap:4px;justify-content:center;margin-top:3px}
+.dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.25)}
+.dots i.on{background:#d4af37}
+.modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(4,1,14,.78);backdrop-filter:blur(3px)}
+.modal.show{display:flex}
+.modal .card{width:100%;max-width:440px;max-height:90vh;overflow:auto;padding:20px 18px;border-radius:18px;background:linear-gradient(180deg,#2a1260,#120632);border:1px solid #d4af37;box-shadow:0 0 30px rgba(155,89,255,.5)}
+.modal h3{margin:0 0 10px;text-align:center;color:#ffe9a8;font-size:21px}
+.modal .row{display:grid;grid-template-columns:5.5em 1fr;gap:6px 10px;font-size:17px;line-height:1.5}
+.modal .row span:nth-child(odd){opacity:.7}
+.modal .row span:nth-child(even){font-weight:bold;color:#fff}
+.modal hr{border:0;border-top:1px dashed rgba(212,175,55,.5);margin:12px 0}
+.modal .btns{display:flex;gap:10px;margin-top:16px}
+.modal .btns button{flex:1;padding:14px;border-radius:30px;font-size:18px;font-family:inherit;cursor:pointer}
+.modal .back{border:1px solid #d4af37;background:transparent;color:#ffe9a8}
+.modal .yes{border:0;background:linear-gradient(135deg,#d4af37,#f7e08a);color:#2a0f55;font-weight:bold}
+.modal .note{text-align:center;font-size:14px;color:#ffb3b3;margin-top:10px}
+.modal img{width:100%;border-radius:12px;display:block}
+.acts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:14px}
+.acts .go{margin:0;width:auto;padding:13px 26px;font-size:18px;letter-spacing:2px}
+.qrow{display:flex;gap:8px}.qrow input{flex:1}.qrow .sec{margin:0;flex:0 0 auto;padding:0 22px;font-size:17px}
+@media (max-width:380px){.opts{grid-template-columns:1fr 1fr}.steps div{font-size:13px}}
 </style>
 </head>
 <body>
@@ -81,58 +134,85 @@ input,select{width:100%;font-size:17px;padding:12px;border-radius:10px;border:1p
     <div id="dlBanner" style="display:none;margin:14px auto 0;max-width:520px;padding:10px 16px;border-radius:14px;border:1px solid rgba(255,207,107,.6);background:linear-gradient(135deg,rgba(255,207,107,.18),rgba(181,123,255,.18));box-shadow:0 0 18px rgba(255,207,107,.35);color:#ffe9a8;font-size:18px;line-height:1.6"></div>
   </header>
   <div class="rule" id="rule"></div>
+  <div class="steps"><div><b>✍️</b>填寫資料</div><div><b>👑</b>四組各選一位</div><div><b>📸</b>截圖兌獎憑證</div></div>
   <div id="main"><div class="loading">✧ 讀取中… ✧</div></div>
   <div class="box" id="lookup" style="display:none">
     <h2>🔍 查詢我的登記</h2>
-    <input id="qPhone" inputmode="numeric" maxlength="12" placeholder="輸入登記的手機號碼">
-    <button class="sec" onclick="lookup()">查詢</button>
+    <div class="qrow"><input id="qPhone" type="tel" inputmode="numeric" maxlength="12" placeholder="輸入登記的手機號碼" onkeydown="if(event.key==='Enter')lookup()">
+    <button class="sec" onclick="lookup()">查詢</button></div>
     <div id="qOut" style="margin-top:12px"></div>
   </div>
   <div class="foot">國際獅子會 300A-2 區</div>
 </div>
+<div class="bar" id="bar" style="display:none"><div class="in"><div class="pg">已選<b id="pgN">0 / 4</b><div class="dots" id="dots"></div></div><button class="go" id="goBtn" onclick="send()">✦ 送出預測 ✦</button></div></div>
+<div class="modal" id="modal" onclick="if(event.target===this)closeM()"><div class="card" id="mcard"></div></div>
 <script src="config.js"></script>
 <script src="common.js"></script>
 <script>
 const FX=starfield(document.getElementById('fx'),{n:110});
 let D=null,sel={},off=0,cdT=null;
+const LS={get:k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+const $=id=>document.getElementById(id);
 function dlMs(){if(!D.deadline)return 0;const d=D.deadline.replace(' ','T');const t=new Date(d+(d.length<=16?':00':'')+'+08:00').getTime();return isNaN(t)?0:t}
 function nowMs(){return Date.now()+off}
-function tick(){const e=document.getElementById('cd');const dl=dlMs();if(!dl)return;const left=dl-nowMs();
-  if(left<=0){clearInterval(cdT);D.open=false;if(document.getElementById('goBtn'))render();return}
+function tick(){const e=$('cd');const dl=dlMs();if(!dl)return;const left=dl-nowMs();
+  if(left<=0){clearInterval(cdT);D.open=false;if($('goBtn')&&$('bar').style.display!=='none')render();return}
   if(!e)return;const d=Math.floor(left/864e5),h=Math.floor(left/36e5)%24,m=Math.floor(left/6e4)%60,s=Math.floor(left/1e3)%60;
   e.innerHTML=`⏰ 距離截止還有 <b>${d?d+' 天 ':''}${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</b>`}
 async function init(){
   try{const r=await apiGet();if(!r.ok)throw 0;D=r.data;off=(D.now||Date.now())-Date.now();render();if(dlMs()){cdT=setInterval(tick,1000);tick()}}
-  catch(e){document.getElementById('main').innerHTML='<div class="box closed">連線失敗，請稍後重新整理。</div>'}
+  catch(e){$('main').innerHTML='<div class="box closed">連線失敗，請稍後重新整理。<br><button class="sec" onclick="location.reload()">重新整理</button></div>'}
 }
 function dlText(){const v=String(D.deadline).replace('T',' ').trim();const [d,t]=v.split(' ');const [y,mo,da]=d.split('-').map(Number);
   const wd='日一二三四五六'[new Date(y,mo-1,da).getDay()];return `${y}年${mo}月${da}日（${wd}）${(t||'').slice(0,5)}`}
-function banner(){const b=document.getElementById('dlBanner');if(!D||!D.deadline||!dlMs()){b.style.display='none';return}
+function banner(){const b=$('dlBanner');if(!D||!D.deadline||!dlMs()){b.style.display='none';return}
   b.style.display='';const left=dlMs()-nowMs();
   b.innerHTML=`⏰ 預測截止：<b style="color:#fff">${dlText()}</b>`+(left>0?'':'<br><span style="color:#ffb3b3">已截止</span>')}
+function hideBar(){$('bar').style.display='none'}
 function render(){
   banner();
-  document.getElementById('title').textContent=D.eventName;document.title=D.eventName+'｜章魚哥預測系統';
-  document.getElementById('rule').innerHTML=`在 <b>對唱、新人、獨唱、長青</b> 四組中，各選一位你認為會拿下冠軍的選手。<br>四組中猜中 <b>${D.minHits} 組以上</b>冠軍，就能獲得 <b>🐙 章魚哥獎</b>！每支手機限登記一次。`+(D.deadline?`<br>⏰ 截止時間：<b>${esc(D.deadline.replace('T',' ').replace(/-/g,'/'))}</b>`:'');
-  document.getElementById('lookup').style.display='';
-  const m=document.getElementById('main');
-  if(D.published){m.innerHTML=resultHTML();return}
+  $('title').textContent=D.eventName;document.title=D.eventName+'｜章魚哥預測系統';
+  $('rule').innerHTML=`四組各猜一位冠軍，猜中 <b>${D.minHits} 組以上</b>就得 <b>🐙 章魚哥獎</b>！<br><span style="opacity:.8;font-size:15px">每支手機限登記一次，送出後不能修改</span>`;
+  $('lookup').style.display='';
+  const m=$('main');
+  if(D.published){hideBar();m.innerHTML=resultHTML();return}
   if(D.open&&dlMs()&&nowMs()>=dlMs())D.open=false;
-  if(!D.open){m.innerHTML='<div class="box closed">🔒 預測登記已截止<br><span style="opacity:.75;font-size:15px">開獎後可在下方輸入手機查詢結果</span></div>';return}
-  const byG=g=>D.players.filter(p=>p.g===g);
-  m.innerHTML=`<div class="box"><h2>📝 獅友資料</h2><div class="cd" id="cd"></div>
-    <label class="f">專區</label><select id="zone"><option value="">請選擇專區</option>${D.zones.map(z=>`<option>${esc(z)}</option>`).join('')}</select>
-    <label class="f">分會</label><input id="club" placeholder="請填寫您的分會，例如：日月光" autocomplete="off">
-    <label class="f">姓名</label><input id="name" placeholder="請輸入姓名" autocomplete="name">
-    <label class="f">手機號碼</label><input id="phone" inputmode="numeric" maxlength="12" placeholder="09xxxxxxxx" autocomplete="tel">
-  </div>
-  <div class="box"><h2>👑 預測冠軍</h2>
-    ${GROUPS.map(g=>`<div class="grp"><h3>${GICON[g]} ${g}組 <span class="st" id="st_${g}">尚未選擇</span></h3>
-      <div class="opts">${byG(g).map((p,i)=>`<div class="opt" data-g="${g}" data-v="${esc(label(p))}" onclick="pick(this)"><div class="n">${esc(p.name)}</div><div class="c">${esc(p.club)}</div></div>`).join('')||'<div style="opacity:.6">選手名單尚未公布</div>'}</div></div>`).join('')}
-    <div class="msg" id="msg"></div>
-    <button class="go" id="goBtn" onclick="send()">✦ 送出預測 ✦</button>
-  </div>`;
+  const mine=LS.get('octo_ticket');
+  if(!D.open){hideBar();m.innerHTML='<div class="box closed">🔒 預測登記已截止<br><span style="opacity:.75;font-size:15px">開獎後可在下方輸入手機查詢結果</span></div>'+(mine?mineHTML(mine,false):'');return}
+  if(mine&&!render.force){hideBar();m.innerHTML=mineHTML(mine,true);return}
+  formHTML();
 }
+function mineHTML(t,canNew){return `<div class="box ok"><h2>✅ 這支手機已登記過</h2>${ticket(t)}
+  <div class="acts"><button class="go" onclick="saveImg()">💾 存成圖片</button></div>
+  ${canNew?'<p style="opacity:.8;font-size:15px;margin-top:16px">要幫家人或朋友用他自己的手機號碼登記？</p><button class="sec" onclick="render.force=1;render()">＋ 幫別人登記</button>':''}</div>`}
+function formHTML(){
+  const byG=g=>D.players.filter(p=>p.g===g);
+  const dr=LS.get('octo_draft')||{};sel=dr.sel||{};
+  $('main').innerHTML=`<div class="box"><h2><span class="num">1</span>獅友資料</h2><div class="cd" id="cd"></div>
+    <label class="f" for="zone">專區</label><select id="zone"><option value="">請選擇專區</option>${D.zones.map(z=>`<option>${esc(z)}</option>`).join('')}</select><div class="hint" id="h_zone"></div>
+    <label class="f" for="club">分會</label><input id="club" placeholder="例如：日月光" autocomplete="off"><div class="hint" id="h_club"></div>
+    <label class="f" for="name">姓名</label><input id="name" placeholder="請輸入姓名" autocomplete="name"><div class="hint" id="h_name"></div>
+    <label class="f" for="phone">手機號碼<small>兌獎時核對用</small></label><input id="phone" type="tel" inputmode="numeric" maxlength="12" placeholder="0912345678" autocomplete="tel"><div class="hint" id="h_phone"></div>
+  </div>
+  <div class="box" id="pickBox"><h2><span class="num">2</span>預測冠軍<small style="font-size:14px;font-weight:normal;opacity:.75;margin-left:8px">每組點一位</small></h2>
+    <div class="chips">${GROUPS.map(g=>`<button class="chip" id="ch_${g}" onclick="goG('${g}')">${GICON[g]} ${g}</button>`).join('')}</div>
+    <input class="srch" id="srch" type="search" placeholder="🔍 搜尋選手姓名或分會" oninput="filt(this.value)">
+    ${GROUPS.map(g=>`<div class="grp" id="g_${g}"><h3>${GICON[g]} ${g}組 <span class="st" id="st_${g}">尚未選擇</span></h3>
+      <div class="opts">${byG(g).map(p=>`<button type="button" class="opt" data-g="${g}" data-v="${esc(label(p))}" data-k="${esc(p.name+' '+p.club)}" onclick="pick(this)"><div class="n">${esc(p.name)}</div><div class="c">${esc(p.club)}</div></button>`).join('')||'<div style="opacity:.6">選手名單尚未公布</div>'}</div></div>`).join('')}
+    <div class="msg" id="msg"></div>
+  </div>`;
+  ['zone','club','name','phone'].forEach(id=>{const e=$(id);if(dr[id])e.value=dr[id];e.addEventListener('input',()=>{e.classList.remove('bad');$('h_'+id).textContent='';draft()})});
+  document.querySelectorAll('.opt').forEach(el=>{if(sel[el.dataset.g]===el.dataset.v)el.classList.add('on')});
+  GROUPS.forEach(g=>{if(sel[g]&&!document.querySelector(`.opt.on[data-g="${g}"]`))delete sel[g]});
+  $('bar').style.display='';prog();
+}
+function draft(){const v=id=>$(id)?$(id).value:'';LS.set('octo_draft',{zone:v('zone'),club:v('club'),name:v('name'),phone:v('phone'),sel})}
+function prog(){const n=GROUPS.filter(g=>sel[g]).length;$('pgN').textContent=n+' / 4';
+  $('dots').innerHTML=GROUPS.map(g=>`<i class="${sel[g]?'on':''}"></i>`).join('');
+  GROUPS.forEach(g=>{const c=$('ch_'+g),st=$('st_'+g),gp=$('g_'+g);if(!c)return;c.classList.toggle('done',!!sel[g]);gp.classList.toggle('done',!!sel[g]);
+    st.textContent=sel[g]?'✔ '+sel[g]:'尚未選擇'})}
+function goG(g){$('g_'+g).scrollIntoView({behavior:'smooth',block:'start'})}
+function filt(q){q=q.trim().toLowerCase();document.querySelectorAll('.opt').forEach(el=>el.classList.toggle('hide',!!q&&!el.dataset.k.toLowerCase().includes(q)))}
 function maskP(p){return String(p).replace(/^(\d{4})\d{3}(\d{3})$/,'$1***$2')}
 function ticket(t,extra){return `<div class="ticket ${t.win?'won':''}"><div class="wm">🐙</div>
   <div class="tt">🐙 章魚哥獎 兌獎憑證</div><div class="ev">${esc(D.eventName)}</div>
@@ -141,24 +221,48 @@ function ticket(t,extra){return `<div class="ticket ${t.win?'won':''}"><div clas
   <div class="pk">${GROUPS.map(g=>{const hit=t.hits&&t.hits.includes(g);return `<span>${GICON[g]} ${g}組</span><span>${esc(t.picks[g])}${t.hits?(hit?' ✔':' ✘'):''}</span>`}).join('')}</div>
   ${extra||''}<div class="tm">登記時間 ${esc(t.time)}</div>
   <div class="warn">📸 請截圖保存此畫面，得獎時出示兌獎</div></div>`}
-function pick(el){const g=el.dataset.g;document.querySelectorAll(`.opt[data-g="${g}"]`).forEach(x=>x.classList.remove('on'));el.classList.add('on');sel[g]=el.dataset.v;
-  document.getElementById('st_'+g).textContent='✔ 已選擇';FX.burstEl(el,40)}
-function err(t){const m=document.getElementById('msg');m.textContent=t;m.style.display='block';m.scrollIntoView({behavior:'smooth',block:'center'})}
-async function send(){
-  const v=id=>document.getElementById(id).value.trim();
-  const b={action:'submit',zone:v('zone'),club:v('club'),name:v('name'),phone:v('phone').replace(/\D/g,''),picks:sel};
-  if(!b.zone)return err('請選擇專區');if(!b.club)return err('請填寫分會');if(!b.name)return err('請填寫姓名');
-  if(!/^09\d{8}$/.test(b.phone))return err('手機號碼格式不正確（09 開頭共 10 碼）');
-  const miss=GROUPS.filter(g=>!sel[g]);if(miss.length)return err('還沒選：'+miss.map(g=>g+'組').join('、'));
-  if(!confirm(`確認送出？送出後不能修改。\n\n${GROUPS.map(g=>`${g}組：${sel[g]}`).join('\n')}`))return;
-  const btn=document.getElementById('goBtn');btn.disabled=true;btn.textContent='送出中…';
+function pick(el){const g=el.dataset.g;const was=el.classList.contains('on');
+  document.querySelectorAll(`.opt[data-g="${g}"]`).forEach(x=>x.classList.remove('on'));
+  if(was){delete sel[g]}else{el.classList.add('on');sel[g]=el.dataset.v;FX.burstEl(el,40)}
+  $('msg').style.display='none';prog();draft();
+  if(!was&&!$('srch').value){const nx=GROUPS.find(x=>!sel[x]);if(nx&&GROUPS.indexOf(nx)>GROUPS.indexOf(g))setTimeout(()=>goG(nx),450)}}
+function err(t){const m=$('msg');m.textContent=t;m.style.display='block';m.scrollIntoView({behavior:'smooth',block:'center'})}
+function bad(id,t){const e=$(id);e.classList.add('bad');$('h_'+id).textContent=t;e.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>e.focus({preventScroll:true}),350);return false}
+function openM(h){$('mcard').innerHTML=h;$('modal').classList.add('show')}
+function closeM(){$('modal').classList.remove('show')}
+let B=null;
+function send(){
+  const v=id=>$(id).value.trim();
+  const b={action:'submit',zone:v('zone'),club:v('club'),name:v('name'),phone:v('phone').replace(/\D/g,''),picks:{...sel}};
+  if(!b.zone)return bad('zone','請選擇您的專區');if(!b.club)return bad('club','請填寫分會');if(!b.name)return bad('name','請填寫姓名');
+  if(!/^09\d{8}$/.test(b.phone))return bad('phone','手機號碼要 09 開頭、共 10 碼');
+  const miss=GROUPS.filter(g=>!sel[g]);if(miss.length){goG(miss[0]);return err('還沒選：'+miss.map(g=>g+'組').join('、'))}
+  B=b;openM(`<h3>請確認您的預測</h3>
+    <div class="row"><span>姓名</span><span>${esc(b.name)}</span><span>專區</span><span>${esc(b.zone)}</span><span>分會</span><span>${esc(b.club)}</span><span>手機</span><span>${esc(b.phone)}</span></div><hr>
+    <div class="row">${GROUPS.map(g=>`<span>${GICON[g]} ${g}組</span><span>${esc(sel[g])}</span>`).join('')}</div>
+    <div class="note">⚠ 送出後不能修改</div>
+    <div class="btns"><button class="back" onclick="closeM()">返回修改</button><button class="yes" id="yesBtn" onclick="doSend()">確認送出</button></div>`)}
+async function doSend(){
+  const b=B,btn=$('goBtn'),y=$('yesBtn');y.disabled=btn.disabled=true;y.textContent='送出中…';
   try{const r=await apiPost(b);
-    if(!r.ok){btn.disabled=false;btn.textContent='✦ 送出預測 ✦';return err(r.error||'送出失敗')}
-    document.getElementById('main').innerHTML=`<div class="box ok"><div class="big">🎉🐙</div><h2>登記成功！</h2>
-      ${ticket({no:r.no,code:r.code,time:r.time,zone:b.zone,club:b.club,name:b.name,phone:maskP(b.phone),picks:sel})}
-      <p style="opacity:.8">開獎後也可以在下方用手機號碼查詢、重新顯示這張憑證。祝你好運！</p></div>`;
+    if(!r.ok){closeM();btn.disabled=false;return err(r.error||'送出失敗')}
+    closeM();hideBar();
+    const t={no:r.no,code:r.code,time:r.time,zone:b.zone,club:b.club,name:b.name,phone:maskP(b.phone),picks:b.picks};
+    LS.set('octo_ticket',t);LS.del('octo_draft');sel={};render.force=0;
+    $('main').innerHTML=`<div class="box ok"><div class="big">🎉🐙</div><h2>登記成功！</h2>${ticket(t)}
+      <div class="acts"><button class="go" onclick="saveImg()">💾 存成圖片</button></div>
+      <p style="opacity:.8">也可以直接截圖。開獎後在下方輸入手機號碼，就能查詢結果。祝您好運！</p></div>`;
     window.scrollTo({top:0,behavior:'smooth'});setTimeout(()=>FX.burstEl(document.querySelector('.ticket'),300),300);
-  }catch(e){btn.disabled=false;btn.textContent='✦ 送出預測 ✦';err('網路連線失敗，請再按一次送出')}
+  }catch(e){closeM();btn.disabled=false;err('網路連線失敗，請再按一次送出')}
+}
+function loadH2C(){return window.html2canvas?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+async function saveImg(){
+  const el=document.querySelector('#main .ticket');if(!el)return;
+  openM('<h3>製作圖片中…</h3>');
+  try{await loadH2C();const c=await html2canvas(el,{backgroundColor:'#1b0b40',scale:2});const u=c.toDataURL('image/png');
+    openM(`<h3>📸 兌獎憑證</h3><img src="${u}" alt="兌獎憑證"><p style="text-align:center;font-size:15px;opacity:.85">手機請<b>長按圖片</b>，選「儲存影像／加入照片」</p>
+      <div class="btns"><button class="back" onclick="closeM()">關閉</button><a class="yes" style="text-align:center;text-decoration:none;padding:14px;border-radius:30px" href="${u}" download="章魚哥獎兌獎憑證.png">下載</a></div>`)}
+  catch(e){openM('<h3>無法產生圖片</h3><p style="text-align:center">請直接截圖保存兌獎憑證。</p><div class="btns"><button class="back" onclick="closeM()">好</button></div>')}
 }
 function resultHTML(){
   return `<div class="box res"><h2>👑 四組冠軍</h2><table>${GROUPS.map(g=>`<tr><th>${GICON[g]} ${g}組</th><td>${esc(D.champions[g]||'—')}</td></tr>`).join('')}</table></div>
@@ -166,14 +270,13 @@ function resultHTML(){
   <table><tr><th>編號</th><th>姓名</th><th>分會</th><th>猜中</th></tr>${D.winners.map(w=>`<tr><td>${esc(w.no)}</td><td>${esc(w.name)}</td><td>${esc(w.club)}<div style="font-size:12px;opacity:.6">${esc(w.zone)}</div></td><td>${w.hits} 組</td></tr>`).join('')||'<tr><td colspan=4>本次無人得獎</td></tr>'}</table></div>`;
 }
 async function lookup(){
-  const ph=document.getElementById('qPhone').value.replace(/\D/g,'');const o=document.getElementById('qOut');
-  if(!/^09\d{8}$/.test(ph)){o.textContent='請輸入正確的手機號碼';return}
+  const ph=$('qPhone').value.replace(/\D/g,'');const o=$('qOut');
+  if(!/^09\d{8}$/.test(ph)){o.textContent='請輸入正確的手機號碼（09 開頭共 10 碼）';return}
   o.textContent='查詢中…';
   try{const r=await apiPost({action:'mine',phone:ph});
     if(!r.ok){o.textContent=r.error;return}
     const ex=r.published?(r.win?`<div class="warn" style="font-size:18px;color:#0b6b34">🎉 恭喜！猜中 ${r.hits.length} 組，獲得章魚哥獎！</div>`:`<div style="margin-top:8px">猜中 ${r.hits.length} 組，差一點點，下次加油！</div>`):'<div style="margin-top:8px;opacity:.75">尚未開獎</div>';
-    let h=ticket({...r,hits:r.published?r.hits:null},ex);
-    o.innerHTML=h;
+    o.innerHTML=ticket({...r,hits:r.published?r.hits:null},ex);
   }catch(e){o.textContent='網路連線失敗'}
 }
 init();
