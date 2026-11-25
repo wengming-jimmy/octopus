@@ -94,6 +94,8 @@ input.bad,select.bad{border:2px solid #ff6b6b;box-shadow:0 0 0 3px rgba(255,107,
 .opt{min-height:64px;padding:12px 8px;display:flex;flex-direction:column;justify-content:center;font-family:inherit;color:inherit;font-size:inherit}
 .opt .n{font-size:18px;line-height:1.35}
 .opt .c{font-size:14px}
+.opt .s{font-size:13px;margin-top:4px;color:#ffd1c2;line-height:1.35;word-break:break-word}
+.opt.on .s{color:#5a2a10}
 .opt:focus-visible{outline:3px solid #fff}
 .opt.hide{display:none}
 .bar{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(12,4,34,.96);border-top:1px solid #d4af37;box-shadow:0 -6px 24px rgba(0,0,0,.5)}
@@ -148,10 +150,12 @@ input.bad,select.bad{border:2px solid #ff6b6b;box-shadow:0 0 0 3px rgba(255,107,
 <div class="modal" id="modal" onclick="if(event.target===this)closeM()"><div class="card" id="mcard"></div></div>
 <script src="config.js"></script>
 <script src="common.js"></script>
+<script src="songs.js"></script>
 <script>
 const FX=starfield(document.getElementById('fx'),{n:110});
 let D=null,sel={},off=0,cdT=null;
 const LS={get:k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+const song=p=>(window.OCTO_SONGS||{})[p.g+'|'+p.name]||'';
 const $=id=>document.getElementById(id);
 function dlMs(){if(!D.deadline)return 0;const d=D.deadline.replace(' ','T');const t=new Date(d+(d.length<=16?':00':'')+'+08:00').getTime();return isNaN(t)?0:t}
 function nowMs(){return Date.now()+off}
@@ -196,9 +200,9 @@ function formHTML(){
   </div>
   <div class="box" id="pickBox"><h2><span class="num">2</span>預測冠軍<small style="font-size:14px;font-weight:normal;opacity:.75;margin-left:8px">每組點一位</small></h2>
     <div class="chips">${GROUPS.map(g=>`<button class="chip" id="ch_${g}" onclick="goG('${g}')">${GICON[g]} ${g}</button>`).join('')}</div>
-    <input class="srch" id="srch" type="search" placeholder="🔍 搜尋選手姓名或分會" oninput="filt(this.value)">
+    <input class="srch" id="srch" type="search" placeholder="🔍 搜尋選手、分會或歌名" oninput="filt(this.value)">
     ${GROUPS.map(g=>`<div class="grp" id="g_${g}"><h3>${GICON[g]} ${g}組 <span class="st" id="st_${g}">尚未選擇</span></h3>
-      <div class="opts">${byG(g).map(p=>`<button type="button" class="opt" data-g="${g}" data-v="${esc(label(p))}" data-k="${esc(p.name+' '+p.club)}" onclick="pick(this)"><div class="n">${esc(p.name)}</div><div class="c">${esc(p.club)}</div></button>`).join('')||'<div style="opacity:.6">選手名單尚未公布</div>'}</div></div>`).join('')}
+      <div class="opts">${byG(g).map(p=>`<button type="button" class="opt" data-g="${g}" data-v="${esc(label(p))}" data-k="${esc(p.name+' '+p.club+' '+song(p))}" onclick="pick(this)"><div class="n">${esc(p.name)}</div><div class="c">${esc(p.club)}</div>${song(p)?`<div class="s">♪ ${esc(song(p))}</div>`:''}</button>`).join('')||'<div style="opacity:.6">選手名單尚未公布</div>'}</div></div>`).join('')}
     <div class="msg" id="msg"></div>
   </div>`;
   ['zone','club','name','phone'].forEach(id=>{const e=$(id);if(dr[id])e.value=dr[id];e.addEventListener('input',()=>{e.classList.remove('bad');$('h_'+id).textContent='';draft()})});
