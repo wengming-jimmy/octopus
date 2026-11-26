@@ -93,6 +93,8 @@ input.bad,select.bad{border:2px solid #ff6b6b;box-shadow:0 0 0 3px rgba(255,107,
 .opts{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
 .opt{min-height:64px;padding:12px 8px;display:flex;flex-direction:column;justify-content:center;font-family:inherit;color:inherit;font-size:inherit}
 .opt .n{font-size:18px;line-height:1.35}
+.opt.duo .n span.q{display:grid;width:fit-content;margin:0 auto 4px}
+.opt.duo .n{white-space:nowrap;font-size:17px;letter-spacing:-.3px}
 .opt .c{font-size:14px}
 .opt .s{font-size:13px;margin-top:4px;color:#ffd1c2;line-height:1.35;word-break:break-word}
 .opt.on .s{color:#5a2a10}
@@ -206,7 +208,7 @@ function formHTML(){
     <div class="chips">${GROUPS.map(g=>`<button class="chip" id="ch_${g}" onclick="goG('${g}')">${GICON[g]} ${g}</button>`).join('')}</div>
     <input class="srch" id="srch" type="search" placeholder="🔍 搜尋選手、分會或歌名" oninput="filt(this.value)">
     ${GROUPS.map(g=>`<div class="grp" id="g_${g}"><h3>${GICON[g]} ${g}組 <span class="st" id="st_${g}">尚未選擇</span></h3>
-      <div class="opts">${byG(g).map(p=>`<button type="button" class="opt" data-g="${g}" data-v="${esc(label(p))}" data-k="${esc(p.name+' '+p.club+' '+song(p))}" onclick="pick(this)"><div class="n">${seq(p)?`<span class="q">${seq(p)}</span>`:''}${esc(p.name)}</div><div class="c">${esc(p.club)}</div>${song(p)?`<div class="s">♪ ${esc(song(p))}</div>`:''}</button>`).join('')||'<div style="opacity:.6">選手名單尚未公布</div>'}</div></div>`).join('')}
+      <div class="opts">${byG(g).map(p=>`<button type="button" class="opt${g==='對唱'?' duo':''}" data-g="${g}" data-v="${esc(label(p))}" data-k="${esc(p.name+' '+p.club+' '+song(p))}" onclick="pick(this)"><div class="n">${seq(p)?`<span class="q">${seq(p)}</span>`:''}${esc(p.name)}</div><div class="c">${esc(p.club)}</div>${song(p)?`<div class="s">♪ ${esc(song(p))}</div>`:''}</button>`).join('')||'<div style="opacity:.6">選手名單尚未公布</div>'}</div></div>`).join('')}
     <div class="msg" id="msg"></div>
   </div>`;
   ['zone','club','name','phone'].forEach(id=>{const e=$(id);if(dr[id])e.value=dr[id];e.addEventListener('input',()=>{e.classList.remove('bad');$('h_'+id).textContent='';draft()})});
